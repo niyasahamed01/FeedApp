@@ -1,118 +1,375 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useState } from 'react';
+import { View, FlatList, TouchableOpacity, Image, Text, StyleSheet, Animated } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { BlurView } from '@react-native-community/blur';
+import { Avatar } from 'react-native-elements';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const SocialMediaFeed = ({ navigation }) => {
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+  const [selectedImage, setSelectedImage] = useState(null);
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [selectedItemId, setSelectedItemId] = useState(null);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const data = [
+    {
+      id: '1', image: require('./src/image/grass.png'), name: "Natural Grass", comment: '574k', like: '400k',  post: 'Even when I am fully engaged as part of a community, I am still an individual who is freely choosing to be part of a community.'
+    },
+    {
+      id: '2', image: require('./src/image/grass_one.png'), name: "Nature Grass", comment: '12k', like: '12k', post: 'Even when I am fully engaged as part of a community, I am still an individual who is freely choosing to be part of a community.'
+    },
+    {
+      id: '3', image: require('./src/image/nature.png'), name: "Natural Image", comment: '10k', like: '4k', post: 'Even when I am fully engaged as part of a community, I am still an individual who is freely choosing to be part of a community.'
+    },
+    {
+      id: '4', image: require('./src/image/nature_one.png'), name: "Natural One", comment: '452k', like: '98k',  post: "Even when I am fully engaged as part of a community, I am still an individual who is freely choosing to be part of a community."
+    },
+    {
+      id: '5', image: require('./src/image/nature_two.png'), nmae: "Natural Two", comment: '147k', like: '123k', post: 'Even when I am fully engaged as part of a community, I am still an individual who is freely choosing to be part of a community.'
+    },
+
+  ];
+
+  const [scale] = useState(new Animated.Value(1));
+
+  const handleImageClick = (image) => {
+    navigation.navigate('EmptyPage', { image });
+    setSelectedImage(image);
   };
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+  const handleHeartClick = (itemId) => {
+    setSelectedItemId(itemId);
+    animateScale()
+
+  };
+
+  const animateScale = () => {
+    // Trigger the animation
+    Animated.sequence([
+      Animated.timing(scale, {
+        toValue: 1.2,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scale, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const renderFeedItem = ({ item }) => {
+
+    const heartScale = selectedItemId === item.id ? scale : 1;
+
+    return (
+      <View style={styles.feedItemContainer}>
+        <View >
+
+          <View style={styles.userInfo}>
+
+            <View style={{ flex: 1, flexDirection: "row", justifyContent: 'flex-start', marginLeft: 10 }}>
+              <Avatar
+                size="medium"
+                title="CR"
+                activeOpacity={0.7}
+              />             
+              
+               <View style={{ flex: 1, flexDirection: "column", justifyContent: 'flex-start', marginLeft: 10 }}>
+
+                <Text style={styles.username}>{item.name}</Text>
+                <View style={{ flex: 1, flexDirection: "row", justifyContent: 'flex-start', marginLeft: 10 }}>
+                  <Image source={require('./src/image/gallery.png')} style={styles.small} />
+                  <Text style={styles.decription}>photo</Text>
+                  <Image source={require('./src/image/eye.png')} style={styles.photos} />
+                  <Text style={styles.decription}>1 day</Text>
+                </View>
+
+
+              </View>
+
+            </View>
+
+            <Image source={require('./src/image/heart.png')} style={styles.heart} />
+          </View>
+
+          <TouchableOpacity onPress={() => handleImageClick(item.image)}>
+            <Image source={item.image} style={styles.image} />
+          </TouchableOpacity>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+        <View style={styles.container1}>
+          <View style={styles.row}>
+            <View style={styles.leftContainer}>
+              <Text style={styles.leftText}>{item.comment}</Text>
+            </View>
+
+            <TouchableOpacity >
+              <Animated.Image
+                source={require('./src/image/comment.png')}
+                style={[styles.button,]}
+              />
+            </TouchableOpacity>
+
+            <View style={styles.leftContainer}>
+
+              <Text style={styles.leftText}>{item.like}</Text>
+
+            </View>
+            <TouchableOpacity onPress={() => handleHeartClick(item.id)}>
+
+              <Animated.Image
+                source={require('./src/image/heart_like.png')}
+                style={[styles.button, { transform: [{ scale: heartScale }] }]}
+              />
+            </TouchableOpacity>
+          </View>
+
+
+          <View style={styles.row1}>
+            <TouchableOpacity  >
+              <Animated.Image
+                source={require('./src/image/send.png')}
+                style={styles.button}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity  >
+              <Animated.Image
+                source={require('./src/image/save_instagram.png')}
+                style={styles.button}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity >
+              <Animated.Image
+                source={require('./src/image/more.png')}
+                style={styles.button}
+              />
+            </TouchableOpacity>
+
+          </View>
+        </View>
+
+        <View style={{ flex: 1, flexDirection: "column", justifyContent: 'flex-start' }}>
+
+          <Text style={styles.post} numberOfLines={2}>{item.post}</Text>
+          <Text style={styles.form} numberOfLines={1}>Photo:@form</Text>
+
+        </View>
+
+
+      </View>
+    );
+  };
+
+  const renderSeparator = () => <View style={styles.separator} />;
+
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id}
+        renderItem={renderFeedItem}
+        ItemSeparatorComponent={renderSeparator}
+
+      />
+    </View>
   );
-}
+};
+
+
+
+
+
+const EmptyPage = ({ route }) => {
+  const { image } = route.params;
+
+  return (
+    <View style={style.container}>
+      <Image source={image} style={style.image} />
+      <BlurView style={StyleSheet.absoluteFill} blurType="light" blurAmount={10} />
+    </View>
+  );
+};
+
+const style = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+});
+
+
+const Stack = createNativeStackNavigator();
+
+
+const App = () => {
+  return (
+
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="SocialMediaFeed">
+        <Stack.Screen name="Home" component={SocialMediaFeed} />
+        <Stack.Screen name="EmptyPage" component={EmptyPage} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container1: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: "row",
+    marginTop: 10
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  row1: {
+    flexDirection: 'row',
+    justifyContent: "flex-end",
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  highlight: {
-    fontWeight: '700',
+  leftContainer: {
+    marginRight: 10,
   },
+  leftText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 5,
+    color: 'black',
+
+  },
+  rightContainer: {
+    marginLeft: 10,
+  },
+  rightText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  imageButton: {
+    marginRight: 20,
+  },
+  image1: {
+    width: 30,
+    height: 30,
+    resizeMode: 'contain',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: 'pink'
+  },
+  feedItemContainer: {
+    marginBottom: 10,
+  },
+  username: {
+    fontWeight: 'bold',
+    color: 'black',
+    fontSize: 15,
+    marginLeft: 10,
+    justifyContent: 'flex-start'
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+  },
+  heart: {
+    width: 20,
+    height: 20,
+    marginRight: 20,
+    marginEnd: 20,
+    alignContent: 'center',
+    alignSelf: 'center',
+    resizeMode: 'cover',
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    marginTop: 15,
+  },
+  button: {
+    width: 20,
+    height: 20,
+    marginEnd: 5,
+    resizeMode: 'contain',
+    alignSelf: "center"
+  },
+  iconContainer: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    // Add styles for icon container
+  },
+  userInfo: {
+    flex: 1, flexDirection: "row", justifyContent: "flex-start"
+  },
+  buttonInfo: {
+    flex: 1, flexDirection: "row", justifyContent: "flex-start"
+  },
+  shareInfo: {
+    flex: 1, flexDirection: "row", justifyContent: "flex-end", alignSelf: "center", alignContent: 'space-between'
+  },
+  profileimage: {
+    width: 20,
+    height: 20,
+    marginLeft: 10
+  },
+
+  small: {
+    width: 20,
+    height: 20,
+    alignSelf: 'center',
+    color: 'black'
+  },
+  decription: {
+    color: 'black',
+    fontSize: 13,
+    marginLeft: 5,
+    alignSelf: 'center'
+  },
+  photos: {
+    marginLeft: 10,
+    width: 20,
+    height: 20,
+    alignSelf: 'center'
+  },
+  post: {
+    color: 'black',
+    fontSize: 15,
+    marginLeft: 5,
+    alignSelf: 'center',
+    alignItems: 'center',
+  },
+  form: {
+    color: 'black',
+    fontSize: 15,
+    marginLeft: 15,
+    marginTop: 5,
+    justifyContent: 'flex-start',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: 'gray',
+    marginVertical: 5,
+  },
+
 });
 
 export default App;
