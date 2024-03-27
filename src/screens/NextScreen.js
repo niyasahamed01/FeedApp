@@ -2,25 +2,26 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, ActivityIndicator, TouchableOpacity, ToastAndroid, StyleSheet } from 'react-native';
+import { View, FlatList, Text, ActivityIndicator, TouchableOpacity, ToastAndroid, StyleSheet, Image } from 'react-native';
 
 
-export const Updates = ({ navigation }) => {
+export const NextScreen = ({ route }) => {
 
+    const { name, phone, email, image } = route.params;
 
+    console.log(image)
     return (
-        <View style={styles.container}>
-            <Icon.Button
-                name="facebook"
-                backgroundColor="#3b5998"
-                onPress={this.loginWithFacebook}
-            >
-                Login with Facebook
-            </Icon.Button>
 
-            {/* <View style={{ marginStart: 10, marginTop: 15 }}>
-            <Ionicons name="funnel" size={30} color="#4F8EF7" />
-        </View> */}
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            
+            <Image source={{ uri: image }} style={styles.image} />
+
+            <Text style={{ color: 'black', fontSize: 20, margin: 10, padding: 10 }}>
+                {name} {'\n'}
+                {phone} {'\n'}
+                {email}
+            </Text>
+
         </View>
     );
 
@@ -48,5 +49,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         color: 'black',
+    },
+    image: {
+        width: '50%',
+        height: '50%',
+        resizeMode: 'cover',
     },
 }); 
