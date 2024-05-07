@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { VectorImageFlatList } from './src/screens/VectorImageFlatList'
+import { HomeList } from './src/screens/Home'
 import { SocialMediaFeed } from './src/screens/SocialMediaFeed'
 import { EmptyPage } from './src/screens/EmptyPage'
 import { Input } from './src/screens/Input'
-import { Profile } from './src/screens/Profile'
-import { Updates } from './src/screens/index'
-import { SettingsComponent } from './src/screens/Settings'
-import { NextScreen } from './src/screens/NextScreen'
+import { Store } from './src/screens/StoreComponent'
+import { Download } from './src/screens/index'
+import { ProfileComponent } from './src/screens/Profile'
+import { DetailScreen } from './src/screens/DetailScreen'
 import { Provider } from 'react-redux'
 import { store } from './src/redux/store'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Notification from './src/screens/Notifications';
+import Detail from './src/screens/DownloadScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,18 +23,25 @@ const Tab = createBottomTabNavigator();
 const SettingStack = () => {
   return (
     <Stack.Navigator >
-      <Stack.Screen name="Settings" component={SettingsComponent} />
-      <Stack.Screen name="NextScreen" component={NextScreen} />
+      <Stack.Screen name="Profile" component={ProfileComponent} />
+      <Stack.Screen name="DetailScreen" component={DetailScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const DownloadStack = () => {
+  return (
+    <Stack.Navigator >
+      <Stack.Screen name="Download" component={Download} />
+      <Stack.Screen name="Detail" component={Detail} />
     </Stack.Navigator>
   );
 };
 
 
-
 const App = () => {
 
   return (
-
     <Provider store={store}>
 
       <NavigationContainer>
@@ -44,7 +53,7 @@ const App = () => {
           }}>
 
           <Tab.Screen name="Home"
-            component={VectorImageFlatList}
+            component={HomeList}
             options={{
               tabBarLabel: 'Home',
               tabBarLabelStyle: { fontSize: 15 },
@@ -52,42 +61,43 @@ const App = () => {
                 <MaterialCommunityIcons name="home" color={color} size={30} />
               ),
             }} />
-          <Tab.Screen name="Notifications" component={Updates}
+
+          <Tab.Screen name="Store" component={Store}
             options={{
-              tabBarLabel: 'Updates',
+              tabBarLabel: 'Store',
+              tabBarLabelStyle: { fontSize: 15 },
+
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="store" color={color} size={30} />
+              ),
+            }}
+          />
+          <Tab.Screen name="Notifications" component={Notification}
+            options={{
+              tabBarLabel: 'Notifications',
               tabBarLabelStyle: { fontSize: 15 },
               tabBarIcon: ({ color, size }) => (
                 <MaterialCommunityIcons name="bell" color={color} size={30} />
               ),
-              tabBarBadge: 3,
+              // tabBarBadge: 3,
             }}
           />
-          <Tab.Screen name="Profile" component={Profile}
+          <Tab.Screen name="Download Image" component={DownloadStack}
+            options={{
+              tabBarLabel: 'Download',
+              tabBarLabelStyle: { fontSize: 15 }, headerShown: false,
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="arrow-down-bold-box" color={color} size={30} />
+              ),
+            }}
+          />
+
+          <Tab.Screen name="Profile Screen" component={SettingStack}
             options={{
               tabBarLabel: 'Profile',
-              tabBarLabelStyle: { fontSize: 15 },
-
+              tabBarLabelStyle: { fontSize: 15 }, headerShown: false,
               tabBarIcon: ({ color, size }) => (
-                <MaterialCommunityIcons name="account" color={color} size={30} />
-              ),
-            }}
-          />
-          <Tab.Screen name="Calender" component={Updates}
-            options={{
-              tabBarLabel: 'Calender',
-              tabBarLabelStyle: { fontSize: 15 },
-              tabBarIcon: ({ color, size }) => (
-                <MaterialCommunityIcons name="calendar-minus" color={color} size={30} />
-              ),
-            }}
-          />
-
-          <Tab.Screen name="Settings" component={SettingStack}
-            options={{
-              tabBarLabel: 'Settings',
-                            tabBarLabelStyle: { fontSize: 15 },headerShown: false,
-              tabBarIcon: ({ color, size }) => (
-                <MaterialCommunityIcons name="cog-outline" color={color} size={30} />
+                <MaterialCommunityIcons name="account-circle" color={color} size={30} />
               ),
             }}
 

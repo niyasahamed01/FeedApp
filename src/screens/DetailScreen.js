@@ -5,11 +5,10 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, ActivityIndicator, TouchableOpacity, ToastAndroid, StyleSheet, Image } from 'react-native';
 
 
-export const NextScreen = ({ route }) => {
+export const DetailScreen = ({ route }) => {
 
     const { name, phone, email, image } = route.params;
 
-    console.log(image)
     return (
 
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -51,8 +50,8 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     image: {
-        width: '50%',
-        height: '50%',
-        resizeMode: 'cover',
+        width: '80%',
+        height: '60%',
+        resizeMode: 'stretch',
     },
 }); 
