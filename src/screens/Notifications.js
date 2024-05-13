@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchApiData } from '../redux/fetchApiData';
 
@@ -23,6 +23,22 @@ const Notification = () => {
             </View>
         </View>
     );
+
+
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
+
+    
+    if (error) {
+        return <View style={{ flex: 1,flexDirection:'column' ,justifyContent:'center'}}>
+            <Text style={styles.footerText}>Error: {error}</Text>
+        </View>
+    }
 
     return (
         <FlatList
@@ -58,6 +74,19 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 16,
     
+    },
+    footerText: {
+        alignSelf: 'center',
+        fontSize: 15,
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: 20,
+        alignItems: 'center'
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

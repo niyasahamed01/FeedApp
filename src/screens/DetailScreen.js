@@ -7,7 +7,7 @@ import { View, FlatList, Text, ActivityIndicator, TouchableOpacity, ToastAndroid
 
 export const DetailScreen = ({ route }) => {
 
-    const { name, phone, email, image } = route.params;
+    const { name, phone, email,address,image } = route.params;
 
     return (
 
@@ -18,7 +18,8 @@ export const DetailScreen = ({ route }) => {
             <Text style={{ color: 'black', fontSize: 20, margin: 10, padding: 10 }}>
                 {name} {'\n'}
                 {phone} {'\n'}
-                {email}
+                {email} {'\n'}
+                {address}
             </Text>
 
         </View>

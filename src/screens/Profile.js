@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Image, PermissionsAndroid, Platform, Alert, Linking } from 'react-native';
+import React, { useState, useEffect,useContext } from 'react';
+import { View, TextInput, Button, Image, PermissionsAndroid, Platform, Alert, Linking, ToastAndroid } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useIsFocused } from '@react-navigation/native';
+import {ProfileContext} from '../screens/ProfileProvider';
 
 export const ProfileComponent = ({ navigation }) => {
 
@@ -9,34 +12,44 @@ export const ProfileComponent = ({ navigation }) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [address, setAddress] = useState('');
+
+    const { updateProfileData } = useContext(ProfileContext);
 
     useEffect(() => {
-        const getStoredProfileImage = async () => {
-            try {
-                const profileImageUri = await AsyncStorage.getItem('profileImage');
-                const storedName = await AsyncStorage.getItem('phone');
-                const storedPhone = await AsyncStorage.getItem('name');
-                const storedEmail = await AsyncStorage.getItem('email');
-
-                if (profileImageUri !== null) {
-                    setProfileImage(profileImageUri);
-                }
-                if (storedName !== null) {
-                    setName(storedName);
-                }
-                if (storedPhone !== null) {
-                    setPhone(storedPhone);
-                }
-                if (storedEmail !== null) {
-                    setEmail(storedEmail);
-                }
-            } catch (error) {
-                console.error('Error getting profile image:', error);
-            }
-        };
         requestCameraPermission();
         getStoredProfileImage();
     }, []);
+
+    
+    const getStoredProfileImage = async () => {
+        try {
+            const profileImageUri = await AsyncStorage.getItem('profileImage');
+            const storedName = await AsyncStorage.getItem('name');
+            const storedPhone = await AsyncStorage.getItem('phone');
+            const storedEmail = await AsyncStorage.getItem('email');
+            const storedAddress = await AsyncStorage.getItem('address');
+
+            if (profileImageUri !== null) {
+                setProfileImage(profileImageUri);
+            }
+            if (storedName !== null) {
+                setName(storedName);
+            }
+            if (storedPhone !== null) {
+                setPhone(storedPhone);
+            }
+            if (storedEmail !== null) {
+                setEmail(storedEmail);
+            }
+            if (storedAddress !== null) {
+                setAddress(storedAddress);
+            }
+        } catch (error) {
+            console.error('Error getting profile image:', error);
+        }
+    };
+
 
     const requestCameraPermission = async () => {
         if (Platform.OS === 'android') {
@@ -51,7 +64,6 @@ export const ProfileComponent = ({ navigation }) => {
                         buttonPositive: 'OK',
                     }
                 );
-                console.log('Camera Permission Result:', granted);
                 if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
                     console.log('Camera Permission Denied');
                     Alert.alert(
@@ -133,6 +145,7 @@ export const ProfileComponent = ({ navigation }) => {
                 try {
                     await AsyncStorage.setItem('profileImage', response.assets[0].uri);
                     setProfileImage(response.assets[0].uri);
+
                 } catch (error) {
                     console.error('Error saving profile image:', error);
                 }
@@ -142,43 +155,75 @@ export const ProfileComponent = ({ navigation }) => {
 
     const handleSaveProfile = async () => {
         try {
-            if (name && phone && email && profileImageUri) {
+            if (!name) {
+                showToast("Name Field is required")
+            } else if (!phone) {
+                showToast("Phone Field is required")
+            } else if (!email) {
+                showToast("Email Field is required")
+            } else if (!profileImageUri) {
+                showToast("Profile Field is required")
+            } else if (!address) {
+                showToast("Address Field is required")
+            } else {
                 await AsyncStorage.setItem('name', name);
                 await AsyncStorage.setItem('phone', phone);
                 await AsyncStorage.setItem('email', email);
+                await AsyncStorage.setItem('address', address);
+                navigation.navigate('DetailScreen', { name, phone, email, address, image: profileImageUri });
+                updateProfileData(name, profileImageUri);
 
-                navigation.navigate('DetailScreen', { name, phone, email, image: profileImageUri });
             }
+
         } catch (error) {
             console.error('Error navigating to next screen:', error);
         }
     };
 
+    const showToast = (message) => {
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+    };
+
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ marginBottom: 20 }}>
-                {profileImageUri && <Image source={{ uri: profileImageUri }} style={{ width: 200, height: 200, borderRadius: 100, margin: 10 }} />}
+        <View style={{ flex: 1, alignItems: 'center', alignContent: 'center' }}>
+
+            <View style={{ margin: 20 }}>
+                {profileImageUri ?
+                    (<Image source={{ uri: profileImageUri }} style={{ width: 200, height: 200, borderRadius: 100, margin: 10 }} />)
+                    : (<MaterialCommunityIcons name="account-circle" color='grey' size={200} />)}
+                    
                 <Button title="Take Picture" onPress={handleCameraPick} />
             </View>
             <TextInput
-                style={{ height: 40, width: 200, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
-                placeholder="Name"
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
+                placeholder="Enter Your Name"
                 value={name}
+                inputMode='text'
                 onChangeText={text => setName(text)}
             />
             <TextInput
-                style={{ height: 40, width: 200, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
-                placeholder="Phone"
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
+                placeholder="Enter Your Phone"
                 value={phone}
+                inputMode='numeric'
                 onChangeText={text => setPhone(text)}
             />
             <TextInput
-                style={{ height: 40, width: 200, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
-                placeholder="Email"
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
+                placeholder="Enter Your Email"
                 value={email}
+                inputMode='email'
                 onChangeText={text => setEmail(text)}
             />
+            <TextInput
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
+                placeholder="Enter Your Address"
+                value={address}
+                inputMode='text'
+                onChangeText={text => setAddress(text)}
+            />
             <Button title="Save Profile" onPress={handleSaveProfile} />
+
         </View>
     );
 };

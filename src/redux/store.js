@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import apiReducer from '../redux/apiSlice';
-import downloadSlice from '../redux/downloadSlice';
+import searchSlice from './searchSlice';
+import homeSlice from '../redux/homeSlice';
 
 
 export const store = configureStore({
     reducer: {
         api: apiReducer,
-        download: downloadSlice
+        search: searchSlice,
+        home: homeSlice,
       }
 });

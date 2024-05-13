@@ -1,9 +1,9 @@
-// downloadSlice.js
+// searchSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchDownloadApiData } from '../redux/fetchApiData';
+import { fetchDownloadApiData } from './fetchApiData';
 
-export const downloadSlice = createSlice({
-  name: 'download',
+export const searchSlice = createSlice({
+  name: 'search',
   initialState: {
     products: [],
     loading: false,
@@ -11,7 +11,6 @@ export const downloadSlice = createSlice({
     page: 1,
     limit: 10,
     skip: 0,
-    hasMore: true,
   },
   reducers: {
     fetchDownloadStart: (state) => {
@@ -21,7 +20,6 @@ export const downloadSlice = createSlice({
     fetchDownloadSuccess: (state, action) => {
       state.loading = false;
       state.products = [...state.products, ...action.payload.products];
-      state.hasMore = action.payload.hasMore;
       state.page += 1;
       state.skip += state.limit;
     },
@@ -32,11 +30,11 @@ export const downloadSlice = createSlice({
   },
 });
 
-export const { fetchDownloadStart, fetchDownloadSuccess, fetchDownloadFailure } = downloadSlice.actions;
+export const { fetchDownloadStart, fetchDownloadSuccess, fetchDownloadFailure } = searchSlice.actions;
 
 export const fetchNextPage = () => async (dispatch, getState) => {
-  const { page, limit, skip } = getState().download;
+  const { page, limit, skip } = getState().search;
   dispatch(fetchDownloadApiData({ page, limit, skip }));
 };
 
-export default downloadSlice.reducer;
+export default searchSlice.reducer;
