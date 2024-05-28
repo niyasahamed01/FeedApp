@@ -25,9 +25,7 @@ export const StoreComponent = ({ navigation }) => {
   const renderFooter = () => {
     if (loading) {
       return (
-          <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#0000ff" />
-          </View>
       );
   }else {
       return (
@@ -46,9 +44,7 @@ export const StoreComponent = ({ navigation }) => {
 
   if (loading) {
     return (
-        <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#0000ff" />
-        </View>
     );
 }
 
@@ -124,12 +120,13 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   description: {
-    fontSize: 18,
+    fontSize: 16,
+    color:'black',
     marginStart: 20,
     width: '95%'
   },
   category: {
-    fontSize: 18,
+    fontSize: 16,
     marginTop: 1,
     marginStart: 20,
     color: 'blue',
@@ -137,13 +134,13 @@ const styles = StyleSheet.create({
     width: '75%'
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     color: 'black',
     fontWeight: 'bold',
     width: '75%'
   },
   rating: {
-    fontSize: 20,
+    fontSize: 18,
     color: 'green',
     fontWeight: 'bold',
     marginStart: 5
@@ -176,7 +173,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     alignSelf: 'center',
-    fontSize: 15,
+    fontSize: 14,
     color: 'black',
     fontWeight: 'bold',
     fontSize: 20,

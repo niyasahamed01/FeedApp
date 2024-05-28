@@ -39,9 +39,10 @@ export const HomeList = ({ navigation }) => {
     const renderFooter = () => {
         if (loading) {
             return (
-                <View style={styles.loadingContainer}>
+                <View style={styles.footer}>
                 <ActivityIndicator size="large" color="#0000ff" />
-            </View>
+                </View>
+
             );
         }
         else {
@@ -98,23 +99,23 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: 'bold',
         color: 'black'
     },
     description: {
-        fontSize: 16,
+        fontSize: 13,
         color: 'black',
         marginTop: 5
     },
     stock: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
         color: 'red',
         marginTop: 5
     },
     price: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
         color: 'blue',
         marginTop: 5
@@ -143,6 +144,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    footer: {
+        paddingVertical: 20, // Adjust the padding as needed
+        borderTopWidth: 1, // Add a border to separate footer from content
+        borderTopColor: '#ccc', // Color of the border
+        alignItems: 'center', // Align items to the center horizontally
     },
 
 });

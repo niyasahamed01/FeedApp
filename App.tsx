@@ -22,6 +22,7 @@ import AuthScreen from './src/screens/AuthScreen';
 import { ProfileProvider } from './src/screens/ProfileProvider';
 import { ProfileContext } from './src/screens/ProfileProvider';
 import ProfileIcon from './src/screens/ProfileIcon';
+import { ListScreen } from './src/screens/ListScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -133,6 +134,7 @@ const App: React.FC = () => {
       <Stack.Navigator >
         <Stack.Screen name="Profile" component={ProfileComponent} />
         <Stack.Screen name="DetailScreen" component={DetailScreen} />
+        <Stack.Screen name="ListScreen" component={ListScreen} />
       </Stack.Navigator>
     );
   };

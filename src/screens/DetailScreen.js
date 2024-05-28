@@ -2,27 +2,35 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, ActivityIndicator, TouchableOpacity, ToastAndroid, StyleSheet, Image } from 'react-native';
+import { View, FlatList, Text, ActivityIndicator, TouchableOpacity, ToastAndroid, StyleSheet, Image, Button } from 'react-native';
 
 
-export const DetailScreen = ({ route }) => {
+export const DetailScreen = ({ route, navigation }) => {
 
-    const { name, phone, email,address,image } = route.params;
+    const { name, phone, email, address, image } = route.params;
+
+
+    const onPress = () => {
+        navigation.navigate('ListScreen')
+    }
 
     return (
 
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.container}>
             
             <Image source={{ uri: image }} style={styles.image} />
 
-            <Text style={{ color: 'black', fontSize: 20, margin: 10, padding: 10 }}>
+            <Text style={{ color: 'black', fontSize: 20, margin: 10, padding: 15 }}>
                 {name} {'\n'}
                 {phone} {'\n'}
                 {email} {'\n'}
                 {address}
             </Text>
 
+            <Button onPress={onPress} title="Add Item" />
+
         </View>
+
     );
 
 }
@@ -31,10 +39,8 @@ export const DetailScreen = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#72e6e8',
-        padding: 8,
+        backgroundColor: 'pink',
         color: 'white'
     },
     input: {
@@ -51,8 +57,10 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     image: {
-        width: '80%',
-        height: '60%',
-        resizeMode: 'stretch',
+        width: 350,
+        height: 350,
+        // borderRadius: 100,
+        margin: 10,
+        resizeMode: 'cover',
     },
 }); 

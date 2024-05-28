@@ -195,31 +195,35 @@ export const ProfileComponent = ({ navigation }) => {
                 <Button title="Take Picture" onPress={handleCameraPick} />
             </View>
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5,color:'black' }}
                 placeholder="Enter Your Name"
                 value={name}
                 inputMode='text'
+                placeholderTextColor="black"
                 onChangeText={text => setName(text)}
             />
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5,color:'black'  }}
                 placeholder="Enter Your Phone"
                 value={phone}
                 inputMode='numeric'
+                placeholderTextColor="black"
                 onChangeText={text => setPhone(text)}
             />
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5,color:'black'  }}
                 placeholder="Enter Your Email"
                 value={email}
                 inputMode='email'
+                placeholderTextColor="black"
                 onChangeText={text => setEmail(text)}
             />
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5 }}
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5,color:'black'  }}
                 placeholder="Enter Your Address"
                 value={address}
                 inputMode='text'
+                placeholderTextColor="black"
                 onChangeText={text => setAddress(text)}
             />
             <Button title="Save Profile" onPress={handleSaveProfile} />

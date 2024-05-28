@@ -87,6 +87,7 @@ export const Search = ({ navigation }) => {
         style={styles.searchInput}
         placeholder="Search by category..."
         onChangeText={(text) => setSearchQuery(text)}
+        placeholderTextColor="blue"
         value={searchQuery}
       />
       {filteredProducts.length === 0 ? (
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   category: {
-    fontSize: 18,
+    fontSize: 16,
     color: 'black',
     fontWeight: 'bold',
     marginTop: 10,
@@ -179,11 +180,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     margin: 10,
     borderRadius: 10,
-    fontSize: 18
+    fontSize: 18,
+    color:'black'
+
   },
   footerText: {
     alignSelf: 'center',
-    fontSize: 15,
+    fontSize: 13,
     color: 'black',
     fontWeight: 'bold',
     fontSize: 20,
