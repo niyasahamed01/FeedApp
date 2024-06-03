@@ -25,9 +25,9 @@ export const StoreComponent = ({ navigation }) => {
   const renderFooter = () => {
     if (loading) {
       return (
-              <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#0000ff" />
       );
-  }else {
+    } else {
       return (
         <TouchableOpacity style={styles.buttonLoad} onPress={handleLoadMore}>
           <Text style={styles.buttonText}> Load More</Text>
@@ -42,44 +42,54 @@ export const StoreComponent = ({ navigation }) => {
     </View>
   }
 
-  if (loading) {
-    return (
-            <ActivityIndicator size="large" color="#0000ff" />
-    );
-}
-
   const handleItemPress = (item) => {
     showToast(` ${item?.title} - Added to Cart`)
-    // navigation.navigate('SocialMediaFeed', { itemId: item.title })
   }
 
+  const handleDownload = (item, navigation) => {
+    navigation.navigate('Detail', { item });
+  };
+
   const renderItem = ({ item }) => (
+    <TouchableOpacity onPress={() => handleDownload(item, navigation)}>
+      <View style={styles.item}>
 
-    <View style={styles.item}>
-
-      <View style={{ flex: 1, flexDirection: 'row', padding: 5 }}>
-        <Image source={{ uri: item.thumbnail }} style={styles.image} />
-        <View style={{ flex: 1, flexDirection: 'column', padding: 5 }}>
-          <Text numberOfLines={2} style={styles.description}>{item.description}</Text>
-          <Text numberOfLines={1} style={styles.category}>{`Category: ${capitalizeFirstLetter(item.category)}`}</Text>
+        <View style={{ flex: 1, flexDirection: 'row', padding: 5 }}>
+          <Image source={{ uri: item.thumbnail }} style={styles.image} />
+          <View style={{ flex: 1, flexDirection: 'column', padding: 5 }}>
+            <Text numberOfLines={2} style={styles.description}>{item.description}</Text>
+            <Text numberOfLines={1} style={styles.category}>{`Category: ${capitalizeFirstLetter(item.category)}`}</Text>
+          </View>
         </View>
-      </View>
 
-      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text numberOfLines={1} style={styles.title}>{capitalizeFirstLetter(item.title)}</Text>
+        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text numberOfLines={1} style={styles.title}>{capitalizeFirstLetter(item.title)}</Text>
 
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
+
+            <Text numberOfLines={1} style={styles.rating}>{item.rating}</Text>
+            
+          </View>
+
+        </View>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
-          <FontAwesome name="star-half-full" color='orange' size={25} />
-          <Text numberOfLines={1} style={styles.rating}>{item.rating}</Text>
+
+        {[...Array(5)].map((_, index) => (
+              <FontAwesome
+                key={index}
+                name={index < item.rating ? "star" : "star-o"} // Renders filled or outline star based on index and rating
+                color='orange'
+                size={25}
+              />
+            ))}
         </View>
 
+        <TouchableOpacity style={styles.button} onPress={() => handleItemPress(item)}>
+          <Text style={styles.buttonText}>BUY NOW</Text>
+        </TouchableOpacity>
+
       </View>
-
-      <TouchableOpacity style={styles.button} onPress={() => handleItemPress(item)}>
-        <Text style={styles.buttonText}>BUY NOW</Text>
-      </TouchableOpacity>
-
-    </View>
+    </TouchableOpacity>
 
   );
 
@@ -121,7 +131,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color:'black',
+    color: 'black',
     marginStart: 20,
     width: '95%'
   },

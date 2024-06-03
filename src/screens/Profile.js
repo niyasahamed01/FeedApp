@@ -1,12 +1,13 @@
-import React, { useState, useEffect,useContext } from 'react';
-import { View, TextInput, Button, Image, PermissionsAndroid, Platform, Alert, Linking, ToastAndroid } from 'react-native';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { View, TextInput, Button, Image, PermissionsAndroid, Platform, Alert, Linking, ToastAndroid, StyleSheet } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useIsFocused } from '@react-navigation/native';
-import {ProfileContext} from '../screens/ProfileProvider';
+import { ProfileContext } from '../screens/ProfileProvider';
+import ActionSheet from 'react-native-actionsheet';
 
-export const ProfileComponent = ({ navigation }) => {
+export const ProfileComponent = ({ handleLogout,navigation }) => {
 
     const [profileImageUri, setProfileImage] = useState(null);
     const [name, setName] = useState('');
@@ -15,13 +16,17 @@ export const ProfileComponent = ({ navigation }) => {
     const [address, setAddress] = useState('');
 
     const { updateProfileData } = useContext(ProfileContext);
+    const actionSheetRef = useRef();
 
     useEffect(() => {
         requestCameraPermission();
         getStoredProfileImage();
     }, []);
 
-    
+    const handleActionSheet = () => {
+        actionSheetRef.current.show();
+    };
+
     const getStoredProfileImage = async () => {
         try {
             const profileImageUri = await AsyncStorage.getItem('profileImage');
@@ -184,6 +189,10 @@ export const ProfileComponent = ({ navigation }) => {
         ToastAndroid.show(message, ToastAndroid.SHORT);
     };
 
+      const onLogout = () => {
+        handleLogout(navigation);
+      };
+
     return (
         <View style={{ flex: 1, alignItems: 'center', alignContent: 'center' }}>
 
@@ -191,11 +200,11 @@ export const ProfileComponent = ({ navigation }) => {
                 {profileImageUri ?
                     (<Image source={{ uri: profileImageUri }} style={{ width: 200, height: 200, borderRadius: 100, margin: 10 }} />)
                     : (<MaterialCommunityIcons name="account-circle" color='grey' size={200} />)}
-                    
+
                 <Button title="Take Picture" onPress={handleCameraPick} />
             </View>
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5,color:'black' }}
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5, color: 'black' }}
                 placeholder="Enter Your Name"
                 value={name}
                 inputMode='text'
@@ -203,7 +212,7 @@ export const ProfileComponent = ({ navigation }) => {
                 onChangeText={text => setName(text)}
             />
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5,color:'black'  }}
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5, color: 'black' }}
                 placeholder="Enter Your Phone"
                 value={phone}
                 inputMode='numeric'
@@ -211,7 +220,7 @@ export const ProfileComponent = ({ navigation }) => {
                 onChangeText={text => setPhone(text)}
             />
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5,color:'black'  }}
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5, color: 'black' }}
                 placeholder="Enter Your Email"
                 value={email}
                 inputMode='email'
@@ -219,7 +228,7 @@ export const ProfileComponent = ({ navigation }) => {
                 onChangeText={text => setEmail(text)}
             />
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5,color:'black'  }}
+                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5, color: 'black' }}
                 placeholder="Enter Your Address"
                 value={address}
                 inputMode='text'
@@ -227,7 +236,35 @@ export const ProfileComponent = ({ navigation }) => {
                 onChangeText={text => setAddress(text)}
             />
             <Button title="Save Profile" onPress={handleSaveProfile} />
-
+            {/* <ActionSheet
+                ref={actionSheetRef}
+                title={'Select Image Source'}
+                options={['Camera', 'Gallery', 'Cancel']}
+                cancelButtonIndex={2}
+                onPress={handleActionSheet}
+            /> */}
+            <View style={styles.container}>
+                <Button title="Logout" onPress={onLogout} />
+            </View>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: 24,
+        marginBottom: 20,
+    },
+    button: {
+        backgroundColor: '#ff0000', // Example background color
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 5,
+        marginTop: 10,
+    },
+});

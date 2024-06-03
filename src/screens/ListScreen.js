@@ -74,7 +74,8 @@ export const ListScreen = ({ navigation }) => {
             <Text style={styles.itemTitle} numberOfLines={1}>{item.name}</Text>
             <Text style={styles.itemTitle} numberOfLines={1}>{item.skills}</Text>
 
-            <TouchableOpacity onPress={() => toggleCheckbox(item.id, item.checked === 1)}>
+            <TouchableOpacity>
+            {/* onPress={() => toggleCheckbox(item.id, item.checked === 1)}> */}
                 <MaterialIcons
                     name={item.checked === 1 ? "check-box" : "check-box-outline-blank"}
                     size={20} // Adjust the size here

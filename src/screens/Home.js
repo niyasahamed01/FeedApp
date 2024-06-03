@@ -5,21 +5,28 @@ import { fetchNextPage } from '../redux/homeSlice';
 
 
 const PureItem = React.memo(({ item, navigation }) => (
-    <View style={styles.itemContainer}>
-        <View style={styles.imageContainer}>
-            <Image source={{ uri: item.thumbnail }} style={styles.image} />
-        </View>
-        <View style={styles.textContainer}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.description}>{item.description}</Text>
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={styles.price}>{`Price : Rs.${item.price} /-`}</Text>
-                <Text style={styles.stock}>{`Stock:${item.stock}`}</Text>
+    <TouchableOpacity onPress={() => handleDownload(item, navigation)}>
+        <View style={styles.itemContainer}>
+            <View style={styles.imageContainer}>
+                <Image source={{ uri: item.thumbnail }} style={styles.image} />
+            </View>
+            <View style={styles.textContainer}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.description}>{item.description}</Text>
+                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={styles.price}>{`Price : Rs.${item.price} /-`}</Text>
+                    <Text style={styles.stock}>{`Stock:${item.stock}`}</Text>
 
+                </View>
             </View>
         </View>
-    </View>
+    </TouchableOpacity>
+
 ));
+
+const handleDownload = (item, navigation) => {
+    navigation.navigate('Detail', { item });
+};
 
 export const HomeList = ({ navigation }) => {
 
@@ -39,10 +46,7 @@ export const HomeList = ({ navigation }) => {
     const renderFooter = () => {
         if (loading) {
             return (
-                <View style={styles.footer}>
                 <ActivityIndicator size="large" color="#0000ff" />
-                </View>
-
             );
         }
         else {
@@ -55,18 +59,18 @@ export const HomeList = ({ navigation }) => {
     };
 
     if (error) {
-        return <View style={{ flex: 1,flexDirection:'column' ,justifyContent:'center'}}>
+        return <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
             <Text style={styles.footerText}>Error: {error}</Text>
         </View>
     }
-    
-    if (loading) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
-            </View>
-        );
-    }
+
+    // if (loading) {
+    //     return (
+    //         <View style={styles.loadingContainer}>
+    //             <ActivityIndicator size="large" color="#0000ff" />
+    //         </View>
+    //     );
+    // }
 
     return (
         <FlatList

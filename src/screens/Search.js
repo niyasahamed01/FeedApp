@@ -8,31 +8,34 @@ import { fetchNextPage } from '../redux/searchSlice';
 
 
 const PureItem = React.memo(({ item, navigation }) => (
-  <View style={styles.itemContainer}>
-    <Text numberOfLines={1} style={styles.category}>{`Category: ${capitalizeFirstLetter(item.category)}`}</Text>
+  <TouchableOpacity onPress={() => handleDownload(item, navigation)}>
+    <View style={styles.itemContainer}>
+      <Text numberOfLines={1} style={styles.category}>{`Category: ${capitalizeFirstLetter(item.category)}`}</Text>
 
-    <ScrollView horizontal
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}>
-      {item.images.map((image, index) => (
-        <View key={index} style={styles.imageContainer}>
-          <Image source={{ uri: image }} style={styles.image} />
-          <Text numberOfLines={1} style={styles.title}>{capitalizeFirstLetter(item.title)}</Text>
-          {/* <TouchableOpacity onPress={() => handleDownload(image, navigation)} style={styles.downloadButton}>
+      <ScrollView horizontal
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}>
+        {item.images.map((image, index) => (
+          <View key={index} style={styles.imageContainer}>
+            <Image source={{ uri: image }} style={styles.image} />
+            <Text numberOfLines={1} style={styles.title}>{capitalizeFirstLetter(item.title)}</Text>
+            {/* <TouchableOpacity onPress={() => handleDownload(image, navigation)} style={styles.downloadButton}>
             <Text style={styles.buttonText}>Download</Text>
           </TouchableOpacity> */}
-        </View>
-      ))}
-    </ScrollView>
-  </View>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  </TouchableOpacity>
+
 ));
 
 const capitalizeFirstLetter = (category) => {
   return category.charAt(0).toUpperCase() + category.slice(1);
 };
 
-const handleDownload = (image, navigation) => {
-  navigation.navigate('Detail', { image });
+const handleDownload = (item, navigation) => {
+  navigation.navigate('Detail', { item });
 };
 
 export const Search = ({ navigation }) => {
@@ -73,10 +76,10 @@ export const Search = ({ navigation }) => {
   };
 
   if (error) {
-    return <View style={{ flex: 1,flexDirection:'column' ,justifyContent:'center'}}>
-        <Text style={styles.footerText}>Error: {error}</Text>
+    return <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
+      <Text style={styles.footerText}>Error: {error}</Text>
     </View>
-}
+  }
 
   return (
     <View style={{
@@ -181,7 +184,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 10,
     fontSize: 18,
-    color:'black'
+    color: 'black'
 
   },
   footerText: {
@@ -191,5 +194,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     alignItems: 'center'
-},
+  },
 });

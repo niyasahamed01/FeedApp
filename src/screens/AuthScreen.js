@@ -1,44 +1,79 @@
+// src/screens/LoginScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AuthScreen = () => {
-  const [username, setUsername] = useState('');
+const LoginScreen = ({ navigation, setIsAuthenticated }) => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    // Simulate authentication logic
-    if (username === 'user' && password === 'password') {
-      // Authentication successful, navigate to home screen or perform any necessary action
-      console.log('Authentication successful');
+  const handleLogin = async () => {
+    const storedEmail = await AsyncStorage.getItem('userEmail');
+    const storedPassword = await AsyncStorage.getItem('userPassword');
+    const storedName = await AsyncStorage.getItem('userName');
+
+    if (email === storedEmail && password === storedPassword) {
+      await AsyncStorage.setItem('isAuthenticated', 'true');
+      setIsAuthenticated(true);
+      Alert.alert('Login Successful', `Welcome, ${storedName}!`);
     } else {
-      setError('Invalid username or password');
+      Alert.alert('Login Failed', 'Invalid email or password');
     }
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ fontSize: 20, marginBottom: 20 }}>Login</Text>
-      {error ? <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text> : null}
+    <View style={styles.container}>
+      <Text style={styles.title}>Login</Text>
       <TextInput
-        style={{ height: 40, width: 200, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-        placeholder="Username"
-        onChangeText={text => setUsername(text)}
-        value={username}
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        placeholderTextColor="blue"
+        onChangeText={setEmail}
       />
       <TextInput
-        style={{ height: 40, width: 200, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
+        style={styles.input}
         placeholder="Password"
-        onChangeText={text => setPassword(text)}
         value={password}
+        onChangeText={setPassword}
+        placeholderTextColor="blue"
         secureTextEntry
       />
-      <Button
-        title="Login"
-        onPress={handleLogin}
-      />
+      <View style={styles.button}>
+        <Button title="Login" onPress={handleLogin} />
+      </View>
+      <View style={styles.button}>
+        <Button title="Register" onPress={() => navigation.navigate('Register')} />
+      </View>
     </View>
   );
 };
 
-export default AuthScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    textAlign: 'center',
+    color:'black'
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingLeft: 8,
+    color: 'black' 
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+});
+
+export default LoginScreen;
