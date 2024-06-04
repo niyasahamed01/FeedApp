@@ -16,6 +16,7 @@
     "@react-navigation/native": "^6.1.14",
     "@react-navigation/native-stack": "^6.9.22",
     "@reduxjs/toolkit": "^2.2.1",
+    "eventemitter3": "^5.0.1",
     "react": "18.2.0",
     "react-native": "^0.73.5",
     "react-native-actionsheet": "^2.4.2",
@@ -26,6 +27,7 @@
     "react-native-screens": "^3.29.0",
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-vector-icons": "^10.0.3",
+    "react-native-video": "^6.1.2",
     "react-redux": "^9.1.0",
     "redux": "^5.0.1"
   },

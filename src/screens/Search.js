@@ -35,7 +35,7 @@ const capitalizeFirstLetter = (category) => {
 };
 
 const handleDownload = (item, navigation) => {
-  navigation.navigate('Detail', { item });
+  navigation.navigate('ProductDetail', { item });
 };
 
 export const Search = ({ navigation }) => {

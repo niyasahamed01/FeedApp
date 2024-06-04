@@ -1,11 +1,13 @@
-import React from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, ToastAndroid, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, ToastAndroid, FlatList, Button } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Video from 'react-native-video';
 
 
 const ProductDetail = ({ route }) => {
 
     const { item } = route.params;
+    const [paused, setPaused] = useState(true);
 
     const showToast = (message) => {
         ToastAndroid.show(message, ToastAndroid.SHORT);
@@ -54,6 +56,25 @@ const ProductDetail = ({ route }) => {
                 <Text style={styles.warray}>Shipping: {item.shippingInformation}  </Text>
                 <Text style={styles.warray}>Warranty Information: {item.warrantyInformation}  </Text>
 
+                <View style={styles.containerVideo}>
+                    <Video
+                        source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
+                        style={styles.video}
+                        controls={true}
+                        resizeMode="contain"
+                        paused={paused}
+                        onBuffer={() => console.log('Buffering...')}
+                        onError={(error) => console.log('Error:', error)}
+                        bufferConfig={{
+                            minBufferMs: 15000,
+                            maxBufferMs: 50000,
+                            bufferForPlaybackMs: 2500,
+                            bufferForPlaybackAfterRebufferMs: 5000
+                        }}
+                    />
+                    <Button title={paused ? 'Play' : 'Pause'} onPress={() => setPaused(!paused)} />
+                </View>
+
                 <View style={styles.container}>
 
                     <View style={styles.leftColumn}>
@@ -61,13 +82,13 @@ const ProductDetail = ({ route }) => {
                     </View>
                     <View style={styles.rightColumn}>
                         <View style={styles.row}>
-                            <Text style={styles.text}>Depth: {item.dimensions.depth}</Text>
+                            <Text style={styles.text}>Depth: {item?.dimensions?.depth}</Text>
                         </View>
                         <View style={styles.row}>
-                            <Text style={styles.text}>Height: {item.dimensions.height}</Text>
+                            <Text style={styles.text}>Height: {item?.dimensions?.height}</Text>
                         </View>
                         <View style={styles.row}>
-                            <Text style={styles.text}>Width: {item.dimensions.width}</Text>
+                            <Text style={styles.text}>Width: {item?.dimensions?.width}</Text>
                         </View>
                     </View>
                 </View>
@@ -112,7 +133,7 @@ const ReviewItem = ({ review }) => (
                     key={index}
                     name={index < review.rating ? "star" : "star-o"} // Renders filled or outline star based on index and rating
                     color='orange'
-                    size={25}
+                    size={20}
                 />
             ))}
         </View>
@@ -168,8 +189,15 @@ const styles = StyleSheet.create({
         color: 'black', backgroundColor: '#f9c2ff', padding: 15
     },
     stock: {
-        marginLeft: 10, marginRight: 10, marginTop: 5, fontWeight: 'bold', fontSize: 13,
-        color: 'black', backgroundColor: 'grey', borderRadius: 5, width: '20%'
+        marginLeft: 10,
+        marginRight: 10,
+        marginTop: 5,
+        fontWeight: 'bold',
+        fontSize: 16,
+        alignSelf: 'center',
+        color: 'black',
+        //backgroundColor: 'grey', 
+        borderRadius: 5, width: '20%'
     },
     category: {
         marginLeft: 10, marginRight: 10, marginTop: 5,
@@ -204,7 +232,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 10,
         backgroundColor: 'violet',
-        marginLeft: 10, marginRight: 10,
+        marginLeft: 10, 
+        marginRight: 10,
+        marginTop: 10,
     },
     leftColumn: {
         flex: 1,
@@ -244,23 +274,23 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: 'bold',
         marginBottom: 5,
-        color:'black'
+        color: 'black'
     },
     comment: {
         fontSize: 13,
         marginBottom: 5,
-        color:'black'
+        color: 'black'
     },
     rating: {
         fontSize: 13,
         fontStyle: 'italic',
         marginBottom: 5,
-        color:'black'
+        color: 'black'
     },
     date: {
         fontSize: 12,
         color: 'grey',
-        color:'black'
+        color: 'black'
     },
     tagText: {
         backgroundColor: 'lightgrey', // Background color for each tag
@@ -271,6 +301,17 @@ const styles = StyleSheet.create({
         color: 'black', fontSize: 13,
         fontWeight: '600',
     },
+    containerVideo: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    video: {
+        width: '100%',
+        height: 300,
+    },
 });
 
 export default ProductDetail;
+
+

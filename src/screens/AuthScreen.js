@@ -1,9 +1,19 @@
 // src/screens/LoginScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import PasswordInput from './PasswordInput';
 
 const LoginScreen = ({ navigation, setIsAuthenticated }) => {
+
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+
+  const toggleSecureTextEntry = () => {
+    setSecureTextEntry(!secureTextEntry);
+  };
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -23,6 +33,9 @@ const LoginScreen = ({ navigation, setIsAuthenticated }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.image}>
+        <Entypo name="yelp" color={'blue'} size={150} />
+      </View>
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
@@ -31,20 +44,16 @@ const LoginScreen = ({ navigation, setIsAuthenticated }) => {
         placeholderTextColor="blue"
         onChangeText={setEmail}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        placeholderTextColor="blue"
-        secureTextEntry
-      />
-      <View style={styles.button}>
-        <Button title="Login" onPress={handleLogin} />
-      </View>
-      <View style={styles.button}>
-        <Button title="Register" onPress={() => navigation.navigate('Register')} />
-      </View>
+      <PasswordInput value={password} onChangeText={setPassword} />
+
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.buttonText}>Register</Text>
+      </TouchableOpacity>
+
     </View>
   );
 };
@@ -53,27 +62,44 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: 'cyan',
     padding: 20,
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
     textAlign: 'center',
-    color:'black'
+    color: 'black'
   },
   input: {
+    alignItems: 'center',
+    borderColor: '#ccc',
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 20,
     paddingLeft: 8,
-    color: 'black' 
+    color: 'black',
+    borderRadius: 10
   },
   button: {
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#007BFF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     marginTop: 10,
+    borderRadius: 30, // This makes the button curved
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  image: {
+    alignContent: 'center',
+    alignSelf: 'center'
+  }
 });
 
 export default LoginScreen;

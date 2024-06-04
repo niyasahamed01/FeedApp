@@ -25,7 +25,7 @@ const PureItem = React.memo(({ item, navigation }) => (
 ));
 
 const handleDownload = (item, navigation) => {
-    navigation.navigate('Detail', { item });
+    navigation.navigate('ProductDetail', { item });
 };
 
 export const HomeList = ({ navigation }) => {
@@ -63,14 +63,6 @@ export const HomeList = ({ navigation }) => {
             <Text style={styles.footerText}>Error: {error}</Text>
         </View>
     }
-
-    // if (loading) {
-    //     return (
-    //         <View style={styles.loadingContainer}>
-    //             <ActivityIndicator size="large" color="#0000ff" />
-    //         </View>
-    //     );
-    // }
 
     return (
         <FlatList

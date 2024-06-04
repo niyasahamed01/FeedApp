@@ -4,6 +4,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNextPage } from '../redux/homeSlice';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { createTable, insertItem } from './cartdb'; // Import the database helper functions
 
 
 export const StoreComponent = ({ navigation }) => {
@@ -42,12 +43,23 @@ export const StoreComponent = ({ navigation }) => {
     </View>
   }
 
-  const handleItemPress = (item) => {
-    showToast(` ${item?.title} - Added to Cart`)
-  }
+  const handleItemPress = async (item) => {
+    try {
+      insertItem(item);
+      showToast(` ${item?.title} - Added to Cart`);
+
+    } catch (error) {
+      showToast('Failed to add item to cart');
+    }
+  };
+
+
+  // const handleItemPress = (item) => {
+  //   showToast(` ${item?.title} - Added to Cart`)
+  // }
 
   const handleDownload = (item, navigation) => {
-    navigation.navigate('Detail', { item });
+    navigation.navigate('ProductDetail', { item });
   };
 
   const renderItem = ({ item }) => (
@@ -85,7 +97,7 @@ export const StoreComponent = ({ navigation }) => {
         </View>
 
         <TouchableOpacity style={styles.button} onPress={() => handleItemPress(item)}>
-          <Text style={styles.buttonText}>BUY NOW</Text>
+          <Text style={styles.buttonText}>ADD TO CART</Text>
         </TouchableOpacity>
 
       </View>

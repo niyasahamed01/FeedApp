@@ -1,0 +1,96 @@
+import SQLite from 'react-native-sqlite-storage';
+
+import CartEventEmitter from './CartEventEmitter';
+
+SQLite.DEBUG(true);
+SQLite.enablePromise(true);
+
+const database_name = "MainDB";
+const database_version = "1.0";
+const database_displayname = "SQLite React Offline Database";
+const database_size = 200000;
+
+const openDB = async () => {
+  return SQLite.openDatabase(database_name, database_version, database_displayname, database_size);
+};
+
+export const createTable = async () => {
+  const db = await openDB();
+  await db.transaction(txn => {
+    txn.executeSql(
+      `CREATE TABLE IF NOT EXISTS Cart (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        item_id INTEGER UNIQUE, 
+        title TEXT, 
+        description TEXT, 
+        thumbnail TEXT, 
+        category TEXT, 
+        rating REAL
+      )`,
+      [],
+      () => {
+        console.log('Table created successfully');
+      },
+      error => {
+        console.error('Error creating table: ', error.message);
+      }
+    );
+  });
+};
+
+export const insertItem = async (item) => {
+  const db = await openDB();
+  await db.transaction(txn => {
+    txn.executeSql(
+      `INSERT OR REPLACE INTO Cart (item_id, title, description, thumbnail, category, rating) VALUES (?, ?, ?, ?, ?, ?)`,
+      [item.id, item.title, item.description, item.thumbnail, item.category, item.rating],
+      () => {
+        console.log('Item added successfully');
+        CartEventEmitter.emit('itemAdded');
+      },
+      error => {
+        console.error('Error adding item: ', error.message);
+      }
+    );
+  });
+};
+
+export const getItems = async () => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    db.transaction(txn => {
+      txn.executeSql(
+        `SELECT * FROM Cart`,
+        [],
+        (tx, results) => {
+          let items = [];
+          for (let i = 0; i < results.rows.length; i++) {
+            items.push(results.rows.item(i));
+          }
+          resolve(items);
+        },
+        error => {
+          console.error('Error getting items: ', error.message);
+          reject(error);
+        }
+      );
+    });
+  });
+};
+
+export const removeItem = async (itemId) => {
+  const db = await openDB();
+  await db.transaction(txn => {
+    txn.executeSql(
+      `DELETE FROM Cart WHERE item_id = ?`,
+      [itemId],
+      () => {
+        console.log('Item removed successfully');
+        CartEventEmitter.emit('itemRemoved');
+      },
+      error => {
+        console.error('Error removing item: ', error.message);
+      }
+    );
+  });
+};

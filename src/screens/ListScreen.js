@@ -51,6 +51,8 @@ export const ListScreen = ({ navigation }) => {
             try {
                 await insertItem(newItemName, newItemSkills, checkboxVisible ? 1 : 0);
                 setCheckboxVisible(false); // Reset checkbox visibility after adding item
+                setNewItemName();
+                setNewItemSkills();
                 fetchItems();
             } catch (error) {
                 console.error('Error adding item:', error);
@@ -75,7 +77,7 @@ export const ListScreen = ({ navigation }) => {
             <Text style={styles.itemTitle} numberOfLines={1}>{item.skills}</Text>
 
             <TouchableOpacity>
-            {/* onPress={() => toggleCheckbox(item.id, item.checked === 1)}> */}
+                {/* onPress={() => toggleCheckbox(item.id, item.checked === 1)}> */}
                 <MaterialIcons
                     name={item.checked === 1 ? "check-box" : "check-box-outline-blank"}
                     size={20} // Adjust the size here

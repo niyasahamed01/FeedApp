@@ -16,9 +16,9 @@ const Notification = () => {
         <View style={styles.itemContainer}>
             <Image source={{ uri: item.thumbnail }} style={styles.image} />
             <View style={styles.textContainer}>
-            <Text style={styles.title}>{`Name: ${item.title}`}</Text>
-                <Text style={styles.title}>{`Brand: ${item.brand}`}</Text>
-                {/* <Text style={styles.title}>{`Price: Rs.${item.price}`}</Text> */}
+                <Text style={styles.title}>{`Name: ${item.title}`}</Text>
+                <Text style={styles.title}>{`Brand: ${item.brand ? item.brand : 'No Brand'}`}</Text>
+                <Text style={styles.title}>{`Price: Rs.${item.price}`}</Text>
                 <Text style={styles.title}>{`Discount Percentage: ${item.discountPercentage} %`}</Text>
             </View>
         </View>
@@ -33,9 +33,9 @@ const Notification = () => {
         );
     }
 
-    
+
     if (error) {
-        return <View style={{ flex: 1,flexDirection:'column' ,justifyContent:'center'}}>
+        return <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
             <Text style={styles.footerText}>Error: {error}</Text>
         </View>
     }
@@ -60,8 +60,9 @@ const styles = StyleSheet.create({
         width: 75,
         height: 75,
         marginRight: 10,
-        alignSelf:'center',
-        borderRadius:50
+        alignSelf: 'center',
+        borderRadius: 50,
+        backgroundColor:'cyan'
     },
     textContainer: {
         flex: 1,
@@ -69,11 +70,11 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 14,
         fontWeight: 'bold',
-        color:'black'
+        color: 'black'
     },
     description: {
         fontSize: 16,
-    
+
     },
     footerText: {
         alignSelf: 'center',

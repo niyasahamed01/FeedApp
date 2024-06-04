@@ -15,6 +15,7 @@ import { store } from './src/redux/store';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Notification from './src/screens/Notifications';
 import Detail from './src/screens/DownloadScreen';
 import { Image, Text } from 'react-native';
@@ -27,6 +28,8 @@ import ProfileIcon from './src/screens/ProfileIcon';
 import { ListScreen } from './src/screens/ListScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ProductDetail from './src/screens/ProductDetail';
+import { CartListComponent } from './src/screens/CartListComponent';
+import { createTable } from './src/screens/cartdb'; // Import the database helper function
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,6 +37,10 @@ const Tab = createBottomTabNavigator();
 const App: React.FC = () => {
   const [isSplashComplete, setIsSplashComplete] = useState<boolean | null>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  useEffect(() => {
+    createTable(); // Ensure the table is created when the application starts
+  }, []);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -107,10 +114,11 @@ const App: React.FC = () => {
       }}
     >
       <Tab.Screen
-        name="Home"
-        component={HomeList}
+        name="HomeComponent"
+        component={HomeStack}
         options={{
           tabBarLabel: 'Home',
+          headerShown: false,
           tabBarLabelStyle: { fontSize: 15 },
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
@@ -118,10 +126,11 @@ const App: React.FC = () => {
         }}
       />
       <Tab.Screen
-        name="Store"
-        component={StoreComponent}
+        name="StoreComponent"
+        component={StoreStack}
         options={{
           tabBarLabel: 'Store',
+          headerShown: false,
           tabBarLabelStyle: { fontSize: 15 },
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="store" color={color} size={size} />
@@ -140,6 +149,7 @@ const App: React.FC = () => {
           ),
         }}
       />
+     
       <Tab.Screen
         name="Notifications"
         component={Notification}
@@ -150,6 +160,18 @@ const App: React.FC = () => {
             <MaterialCommunityIcons name="bell" color={color} size={size} />
           ),
           tabBarBadge: 3,
+        }}
+      />
+
+       <Tab.Screen
+        name="Cart"
+        component={CartListComponent}
+        options={{
+          tabBarLabel: 'Cart',
+          tabBarLabelStyle: { fontSize: 15 },
+          tabBarIcon: ({ color, size }) => (
+            <AntDesign name="shoppingcart" color={color} size={size} />
+          ),
         }}
       />
       <Tab.Screen
@@ -175,6 +197,21 @@ const App: React.FC = () => {
     return <Text style={{ color }}>{profileData.name ? profileData.name : 'Profile'}</Text>;
   };
 
+  
+const HomeStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Home" component={HomeList} />
+    <Stack.Screen name="ProductDetail" component={ProductDetail} />
+  </Stack.Navigator>
+);
+
+const StoreStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Store" component={StoreComponent} />
+    <Stack.Screen name="ProductDetail" component={ProductDetail} />
+  </Stack.Navigator>
+);
+
   const SettingStack = () => (
     <Stack.Navigator>
       <Stack.Screen
@@ -183,20 +220,13 @@ const App: React.FC = () => {
       />
       <Stack.Screen name="DetailScreen" component={DetailScreen} />
       <Stack.Screen name="ListScreen" component={ListScreen} />
-      <Stack.Screen
-        name="Login"
-        options={{ headerShown: false }}
-        component={(props: any) => <LoginScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
-      />
-      <Stack.Screen name="Register" component={RegisterScreen} />
     </Stack.Navigator>
   );
 
   const SearchStack = () => (
     <Stack.Navigator>
       <Stack.Screen name="Search" component={Search} />
-      {/* <Stack.Screen name="Detail" component={Detail} /> */}
-      <Stack.Screen name="Detail" component={ProductDetail} />
+      <Stack.Screen name="ProductDetail" component={ProductDetail} />
     </Stack.Navigator>
   );
 
