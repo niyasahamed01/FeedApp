@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import apiReducer from '../redux/apiSlice';
 import searchSlice from './searchSlice';
 import homeSlice from '../redux/homeSlice';
+import orderReducer from '../redux/orderReducer';
 
 
 export const store = configureStore({
@@ -9,5 +10,6 @@ export const store = configureStore({
         api: apiReducer,
         search: searchSlice,
         home: homeSlice,
+        orderList:orderReducer
       }
 });

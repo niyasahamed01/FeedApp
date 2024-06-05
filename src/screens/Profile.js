@@ -7,13 +7,14 @@ import { useIsFocused } from '@react-navigation/native';
 import { ProfileContext } from '../screens/ProfileProvider';
 import ActionSheet from 'react-native-actionsheet';
 
-export const ProfileComponent = ({ handleLogout,navigation }) => {
+export const ProfileComponent = ({ handleLogout, navigation }) => {
 
     const [profileImageUri, setProfileImage] = useState(null);
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [address, setAddress] = useState('');
+    const [pin, setPin] = useState('');
 
     const { updateProfileData } = useContext(ProfileContext);
     const actionSheetRef = useRef();
@@ -34,6 +35,7 @@ export const ProfileComponent = ({ handleLogout,navigation }) => {
             const storedPhone = await AsyncStorage.getItem('phone');
             const storedEmail = await AsyncStorage.getItem('email');
             const storedAddress = await AsyncStorage.getItem('address');
+            const storedPin = await AsyncStorage.getItem('pin');
 
             if (profileImageUri !== null) {
                 setProfileImage(profileImageUri);
@@ -49,6 +51,9 @@ export const ProfileComponent = ({ handleLogout,navigation }) => {
             }
             if (storedAddress !== null) {
                 setAddress(storedAddress);
+            }
+            if (storedPin !== null) {
+                setPin(storedPin);
             }
         } catch (error) {
             console.error('Error getting profile image:', error);
@@ -170,12 +175,15 @@ export const ProfileComponent = ({ handleLogout,navigation }) => {
                 showToast("Profile Field is required")
             } else if (!address) {
                 showToast("Address Field is required")
+            } else if (!pin) {
+                showToast("Address Field is required")
             } else {
                 await AsyncStorage.setItem('name', name);
                 await AsyncStorage.setItem('phone', phone);
                 await AsyncStorage.setItem('email', email);
                 await AsyncStorage.setItem('address', address);
-                navigation.navigate('DetailScreen', { name, phone, email, address, image: profileImageUri });
+                await AsyncStorage.setItem('pin', pin);
+                navigation.navigate('DetailScreen', { name, phone, email, address, pin, image: profileImageUri, type: 0 });
                 updateProfileData(name, profileImageUri);
 
             }
@@ -189,14 +197,14 @@ export const ProfileComponent = ({ handleLogout,navigation }) => {
         ToastAndroid.show(message, ToastAndroid.SHORT);
     };
 
-      const onLogout = () => {
+    const onLogout = () => {
         handleLogout(navigation);
-      };
+    };
 
     return (
         <View style={{ flex: 1, alignItems: 'center', alignContent: 'center' }}>
 
-            <View style={{ margin: 20 }}>
+            <View style={{ margin: 15 }}>
                 {profileImageUri ?
                     (<Image source={{ uri: profileImageUri }} style={{ width: 200, height: 200, borderRadius: 100, margin: 10 }} />)
                     : (<MaterialCommunityIcons name="account-circle" color='grey' size={200} />)}
@@ -204,7 +212,7 @@ export const ProfileComponent = ({ handleLogout,navigation }) => {
                 <Button title="Take Picture" onPress={handleCameraPick} />
             </View>
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5, color: 'black' }}
+                style={{ height: 40, width: "90%", borderColor: 'gray', borderWidth: 1, marginBottom: 15, paddingLeft: 5, color: 'black' }}
                 placeholder="Enter Your Name"
                 value={name}
                 inputMode='text'
@@ -212,7 +220,7 @@ export const ProfileComponent = ({ handleLogout,navigation }) => {
                 onChangeText={text => setName(text)}
             />
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5, color: 'black' }}
+                style={{ height: 40, width: "90%", borderColor: 'gray', borderWidth: 1, marginBottom: 15, paddingLeft: 5, color: 'black' }}
                 placeholder="Enter Your Phone"
                 value={phone}
                 inputMode='numeric'
@@ -220,7 +228,7 @@ export const ProfileComponent = ({ handleLogout,navigation }) => {
                 onChangeText={text => setPhone(text)}
             />
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5, color: 'black' }}
+                style={{ height: 40, width: "90%", borderColor: 'gray', borderWidth: 1, marginBottom: 15, paddingLeft: 5, color: 'black' }}
                 placeholder="Enter Your Email"
                 value={email}
                 inputMode='email'
@@ -228,12 +236,20 @@ export const ProfileComponent = ({ handleLogout,navigation }) => {
                 onChangeText={text => setEmail(text)}
             />
             <TextInput
-                style={{ height: 40, width: "80%", borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingLeft: 5, color: 'black' }}
+                style={{ height: 40, width: "90%", borderColor: 'gray', borderWidth: 1, marginBottom: 15, paddingLeft: 5, color: 'black' }}
                 placeholder="Enter Your Address"
                 value={address}
                 inputMode='text'
                 placeholderTextColor="black"
                 onChangeText={text => setAddress(text)}
+            />
+            <TextInput
+                style={{ height: 40, width: "90%", borderColor: 'gray', borderWidth: 1, marginBottom: 15, paddingLeft: 5, color: 'black' }}
+                placeholder="Enter Your Picode"
+                value={pin}
+                inputMode='numeric'
+                placeholderTextColor="black"
+                onChangeText={text => setPin(text)}
             />
             <Button title="Save Profile" onPress={handleSaveProfile} />
             {/* <ActionSheet

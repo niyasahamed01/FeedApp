@@ -29,7 +29,9 @@ import { ListScreen } from './src/screens/ListScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ProductDetail from './src/screens/ProductDetail';
 import { CartListComponent } from './src/screens/CartListComponent';
-import { createTable } from './src/screens/cartdb'; // Import the database helper function
+import AddressItem from './src/screens/AddressItem';
+import ReviewScreen from './src/screens/ReviewScreen';
+import ConfirmOrderList from './src/screens/ConfirmOrderList';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,10 +39,6 @@ const Tab = createBottomTabNavigator();
 const App: React.FC = () => {
   const [isSplashComplete, setIsSplashComplete] = useState<boolean | null>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-  useEffect(() => {
-    createTable(); // Ensure the table is created when the application starts
-  }, []);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -77,7 +75,7 @@ const App: React.FC = () => {
         <Stack.Screen
           name="Splash"
           options={{ headerShown: false }}
-          component={(props:any) => <SplashScreen {...props} setIsSplashComplete={setIsSplashComplete} />}
+          component={(props: any) => <SplashScreen {...props} setIsSplashComplete={setIsSplashComplete} />}
         />
       ) : !isAuthenticated ? (
         <Stack.Screen
@@ -149,7 +147,7 @@ const App: React.FC = () => {
           ),
         }}
       />
-     
+
       <Tab.Screen
         name="Notifications"
         component={Notification}
@@ -163,12 +161,13 @@ const App: React.FC = () => {
         }}
       />
 
-       <Tab.Screen
+      <Tab.Screen
         name="Cart"
-        component={CartListComponent}
+        component={CartStack}
         options={{
           tabBarLabel: 'Cart',
           tabBarLabelStyle: { fontSize: 15 },
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <AntDesign name="shoppingcart" color={color} size={size} />
           ),
@@ -197,26 +196,44 @@ const App: React.FC = () => {
     return <Text style={{ color }}>{profileData.name ? profileData.name : 'Profile'}</Text>;
   };
 
-  
-const HomeStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="Home" component={HomeList} />
-    <Stack.Screen name="ProductDetail" component={ProductDetail} />
-  </Stack.Navigator>
-);
 
-const StoreStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="Store" component={StoreComponent} />
-    <Stack.Screen name="ProductDetail" component={ProductDetail} />
-  </Stack.Navigator>
-);
+  const HomeStack = () => (
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen name="Home" component={HomeList} />
+      <Stack.Screen name="ProductDetail" component={ProductDetail} />
+    </Stack.Navigator>
+  );
+
+  const StoreStack = () => (
+    <Stack.Navigator>
+      <Stack.Screen name="Store" component={StoreComponent} />
+      <Stack.Screen name="ProductDetail" component={ProductDetail} />
+    </Stack.Navigator>
+  );
+
+  const CartStack = () => (
+    <Stack.Navigator>
+      <Stack.Screen name="Cart" component={CartListComponent} />
+      <Stack.Screen
+        name="AddressItem"
+        component={AddressItem}
+      />
+      <Stack.Screen
+        name="Review"
+        component={ReviewScreen}
+      />
+      <Stack.Screen
+        name="ConfirmOrderList"
+        component={ConfirmOrderList}
+      />
+    </Stack.Navigator>
+  );
 
   const SettingStack = () => (
     <Stack.Navigator>
       <Stack.Screen
         name="Profile"
-        component={(props:any) => <ProfileComponent {...props} handleLogout={handleLogout} />}
+        component={(props: any) => <ProfileComponent {...props} handleLogout={handleLogout} />}
       />
       <Stack.Screen name="DetailScreen" component={DetailScreen} />
       <Stack.Screen name="ListScreen" component={ListScreen} />

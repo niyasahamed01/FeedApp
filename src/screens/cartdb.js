@@ -1,5 +1,4 @@
 import SQLite from 'react-native-sqlite-storage';
-
 import CartEventEmitter from './CartEventEmitter';
 
 SQLite.DEBUG(true);
@@ -25,7 +24,8 @@ export const createTable = async () => {
         description TEXT, 
         thumbnail TEXT, 
         category TEXT, 
-        rating REAL
+        rating REAL,
+        price INTEGER
       )`,
       [],
       () => {
@@ -38,12 +38,50 @@ export const createTable = async () => {
   });
 };
 
+const checkAndAddPriceColumn = async () => {
+  const db = await openDB();
+  await db.transaction(txn => {
+    txn.executeSql(
+      `PRAGMA table_info(Cart)`,
+      [],
+      (tx, results) => {
+        const columns = [];
+        for (let i = 0; i < results.rows.length; i++) {
+          columns.push(results.rows.item(i).name);
+        }
+        if (!columns.includes('price')) {
+          txn.executeSql(
+            `ALTER TABLE Cart ADD COLUMN price INTEGER`,
+            [],
+            () => {
+              console.log('Price column added successfully');
+            },
+            error => {
+              console.error('Error adding price column: ', error.message);
+            }
+          );
+        }
+      },
+      error => {
+        console.error('Error checking table info: ', error.message);
+      }
+    );
+  });
+};
+
+const initializeDatabase = async () => {
+  await createTable();
+  await checkAndAddPriceColumn();
+};
+
+initializeDatabase();
+
 export const insertItem = async (item) => {
   const db = await openDB();
   await db.transaction(txn => {
     txn.executeSql(
-      `INSERT OR REPLACE INTO Cart (item_id, title, description, thumbnail, category, rating) VALUES (?, ?, ?, ?, ?, ?)`,
-      [item.id, item.title, item.description, item.thumbnail, item.category, item.rating],
+      `INSERT OR REPLACE INTO Cart (item_id, title, description, thumbnail, category, rating, price) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [item.id, item.title, item.description, item.thumbnail, item.category, item.rating, item.price],
       () => {
         console.log('Item added successfully');
         CartEventEmitter.emit('itemAdded');

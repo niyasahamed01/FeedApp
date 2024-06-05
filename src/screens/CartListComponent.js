@@ -1,11 +1,13 @@
-import React, { useState, useEffect,useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FlatList, Text, StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { getItems, removeItem } from './cartdb';
 import { ActivityIndicator } from 'react-native-paper';
 
 import CartEventEmitter from './CartEventEmitter';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const CartListComponent = () => {
+export const CartListComponent = ({ navigation }) => {
+
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,6 +28,7 @@ export const CartListComponent = () => {
 
   const fetchCartItems = async () => {
     try {
+
       setLoading(true);
       const items = await getItems();
       setCartItems(items);
@@ -44,15 +47,36 @@ export const CartListComponent = () => {
     }
   };
 
+  const handleItem = async (item) => {
+    console.log(item, "item.............");
+    try {
+      const profileImageUri = await AsyncStorage.getItem('profileImage');
+      const name = await AsyncStorage.getItem('name');
+      const phone = await AsyncStorage.getItem('phone');
+      const email = await AsyncStorage.getItem('email');
+      const address = await AsyncStorage.getItem('address');
+      const pin = await AsyncStorage.getItem('pin');
+      navigation.navigate('AddressItem', { name, phone, email, address, pin, image: profileImageUri, item: item });
+    } catch (error) {
+      console.error('Error removing item:', error);
+    }
+  };
+
   const renderItem = useCallback(({ item }) => (
     <View style={styles.item}>
       <Image source={{ uri: item.thumbnail }} style={styles.image} />
       <View style={styles.itemDetails}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.description}</Text>
-        <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveItem(item.item_id)}>
-          <Text style={styles.buttonText}>REMOVE</Text>
-        </TouchableOpacity>
+        <View style={{ flex: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
+          <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveItem(item.item_id)}>
+            <Text style={styles.buttonText}>REMOVE</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.addButton} onPress={() => handleItem(item)}>
+            <Text style={styles.buttonText}>BUY NOW</Text>
+          </TouchableOpacity>
+        </View>
+
       </View>
     </View>
   ), []);
@@ -99,11 +123,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-    color:'black'
+    color: 'black'
   },
   description: {
     fontSize: 12,
-    color:'black'
+    color: 'black'
   },
   image: {
     width: 75,
@@ -115,7 +139,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#ff0000',
     borderRadius: 5,
     padding: 10,
-    color:'black'
+    color: 'black'
+  },
+  addButton: {
+    marginTop: 10,
+    backgroundColor: 'orange',
+    borderRadius: 5,
+    padding: 10,
+    color: 'black'
   },
   buttonText: {
     color: '#fff',
@@ -127,7 +158,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
-    color:'black'
+    color: 'black',
+    fontWeight:'bold'
   },
   loadingContainer: {
     flex: 1,

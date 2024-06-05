@@ -13,6 +13,10 @@ export const StoreComponent = ({ navigation }) => {
   const { products, loading, error, page, } = useSelector((state) => state.home);
 
   useEffect(() => {
+    createTable(); // Ensure the table is created when the application starts
+  }, []);
+
+  useEffect(() => {
     dispatch(fetchNextPage());
   }, [dispatch]);
 
@@ -52,11 +56,6 @@ export const StoreComponent = ({ navigation }) => {
       showToast('Failed to add item to cart');
     }
   };
-
-
-  // const handleItemPress = (item) => {
-  //   showToast(` ${item?.title} - Added to Cart`)
-  // }
 
   const handleDownload = (item, navigation) => {
     navigation.navigate('ProductDetail', { item });
