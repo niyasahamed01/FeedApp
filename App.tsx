@@ -3,7 +3,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeList } from './src/screens/Home';
-import { SocialMediaFeed } from './src/screens/SocialMediaFeed';
 import { EmptyPage } from './src/screens/EmptyPage';
 import { Input } from './src/screens/Input';
 import { StoreComponent } from './src/screens/StoreComponent';
@@ -32,20 +31,23 @@ import { CartListComponent } from './src/screens/CartListComponent';
 import AddressItem from './src/screens/AddressItem';
 import ReviewScreen from './src/screens/ReviewScreen';
 import ConfirmOrderList from './src/screens/ConfirmOrderList';
+import { SettingScreen } from './src/screens/SettingScreen';
+import { CartProvider, useCart } from './src/screens/CartContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const App: React.FC = () => {
+
   const [isSplashComplete, setIsSplashComplete] = useState<boolean | null>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       const authStatus = await AsyncStorage.getItem('isAuthenticated');
       setIsAuthenticated(authStatus === 'true');
     };
-
     if (isSplashComplete) {
       checkAuthStatus();
     }
@@ -55,7 +57,6 @@ const App: React.FC = () => {
     try {
       await AsyncStorage.clear();
       setIsAuthenticated(false);
-      navigation.navigate('Auth');
     } catch (error) {
       console.error('Error clearing AsyncStorage:', error);
     }
@@ -63,9 +64,11 @@ const App: React.FC = () => {
 
   const MainNavigation = () => (
     <ProfileProvider>
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
+      <CartProvider>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </CartProvider>
     </ProfileProvider>
   );
 
@@ -79,7 +82,7 @@ const App: React.FC = () => {
         />
       ) : !isAuthenticated ? (
         <Stack.Screen
-          name="Auth"
+          name="Login"
           options={{ headerShown: false }}
           component={AuthStack}
         />
@@ -94,7 +97,7 @@ const App: React.FC = () => {
   );
 
   const AuthStack = () => (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen
         name="Login"
         component={(props: any) => <LoginScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
@@ -149,19 +152,6 @@ const App: React.FC = () => {
       />
 
       <Tab.Screen
-        name="Notifications"
-        component={Notification}
-        options={{
-          tabBarLabel: 'Notifications',
-          tabBarLabelStyle: { fontSize: 15 },
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="bell" color={color} size={size} />
-          ),
-          tabBarBadge: 3,
-        }}
-      />
-
-      <Tab.Screen
         name="Cart"
         component={CartStack}
         options={{
@@ -171,10 +161,11 @@ const App: React.FC = () => {
           tabBarIcon: ({ color, size }) => (
             <AntDesign name="shoppingcart" color={color} size={size} />
           ),
+          tabBarBadge: useCart().cartItemCount > 0 ? useCart().cartItemCount : undefined,
         }}
       />
       <Tab.Screen
-        name="Profile Screen"
+        name="Setting"
         component={SettingStack}
         options={{
           tabBarLabel: ({ focused, color }) => (
@@ -189,6 +180,7 @@ const App: React.FC = () => {
       />
     </Tab.Navigator>
   );
+
 
   const TabBarLabel: React.FC<{ focused: boolean; color: string }> = ({ focused, color }) => {
     const { profileData } = useContext<any>(ProfileContext); // Access profileData from the context
@@ -231,12 +223,19 @@ const App: React.FC = () => {
 
   const SettingStack = () => (
     <Stack.Navigator>
+      <Stack.Screen name="Setting"
+        component={(props: any) => <SettingScreen {...props} handleLogout={handleLogout} />} />
       <Stack.Screen
         name="Profile"
-        component={(props: any) => <ProfileComponent {...props} handleLogout={handleLogout} />}
+        component={ProfileComponent}
       />
+      <Stack.Screen name="Notification" component={Notification} />
       <Stack.Screen name="DetailScreen" component={DetailScreen} />
-      <Stack.Screen name="ListScreen" component={ListScreen} />
+      <Stack.Screen name="AddDetails" component={ListScreen} />
+      <Stack.Screen
+        name="ConfirmOrderList"
+        component={ConfirmOrderList}
+      />
     </Stack.Navigator>
   );
 

@@ -5,9 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchNextPage } from '../redux/homeSlice';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { createTable, insertItem } from './cartdb'; // Import the database helper functions
+import { useCart } from './CartContext';
 
 
 export const StoreComponent = ({ navigation }) => {
+
+  const { addToCart } = useCart();
 
   const dispatch = useDispatch();
   const { products, loading, error, page, } = useSelector((state) => state.home);
@@ -49,9 +52,9 @@ export const StoreComponent = ({ navigation }) => {
 
   const handleItemPress = async (item) => {
     try {
-      insertItem(item);
+      await insertItem(item);
       showToast(` ${item?.title} - Added to Cart`);
-
+      addToCart(item);
     } catch (error) {
       showToast('Failed to add item to cart');
     }
@@ -76,23 +79,27 @@ export const StoreComponent = ({ navigation }) => {
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text numberOfLines={1} style={styles.title}>{capitalizeFirstLetter(item.title)}</Text>
 
-          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
-
-            <Text numberOfLines={1} style={styles.rating}>{item.rating}</Text>
-            
+          <View >
+            <Text numberOfLines={1} style={styles.rating}>Rating: {item.rating}</Text>
           </View>
 
         </View>
-        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
 
-        {[...Array(5)].map((_, index) => (
+        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+
+          <Text numberOfLines={1} style={styles.title}>Rs.{item.price} /-</Text>
+          <View style={{  flexDirection: 'row',marginTop:2 }}>
+            {[...Array(5)].map((_, index) => (
               <FontAwesome
                 key={index}
                 name={index < item.rating ? "star" : "star-o"} // Renders filled or outline star based on index and rating
                 color='orange'
-                size={25}
+                size={18}
               />
             ))}
+
+          </View>
+
         </View>
 
         <TouchableOpacity style={styles.button} onPress={() => handleItemPress(item)}>
@@ -141,13 +148,13 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   description: {
-    fontSize: 16,
+    fontSize: 14,
     color: 'black',
     marginStart: 20,
     width: '95%'
   },
   category: {
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 1,
     marginStart: 20,
     color: 'blue',
@@ -155,13 +162,13 @@ const styles = StyleSheet.create({
     width: '75%'
   },
   title: {
-    fontSize: 18,
+    fontSize: 15,
     color: 'black',
     fontWeight: 'bold',
     width: '75%'
   },
   rating: {
-    fontSize: 18,
+    fontSize: 15,
     color: 'green',
     fontWeight: 'bold',
     marginStart: 5
@@ -188,13 +195,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff', // White color for text
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   footerText: {
     alignSelf: 'center',
-    fontSize: 14,
+    fontSize: 12,
     color: 'black',
     fontWeight: 'bold',
     fontSize: 20,

@@ -26,7 +26,7 @@ export const ListScreen = ({ navigation }) => {
     const fetchItems = async () => {
         try {
             const items = await getItems();
-            if (items && items.length > 0) {
+            if (items) {
                 setItems(items);
             } else {
                 console.error('No items found');
@@ -39,7 +39,7 @@ export const ListScreen = ({ navigation }) => {
     const deleteItemHandler = async (id) => {
         try {
             await deleteItem(id);
-            fetchItems(); // Refresh the list after deletion
+            await fetchItems(); // Refresh the list after deletion
             ToastAndroid.show('Delete successful', ToastAndroid.SHORT); // Show toast message
         } catch (error) {
             console.error('Error deleting item:', error);
@@ -77,7 +77,6 @@ export const ListScreen = ({ navigation }) => {
             <Text style={styles.itemTitle} numberOfLines={1}>{item.skills}</Text>
 
             <TouchableOpacity>
-                {/* onPress={() => toggleCheckbox(item.id, item.checked === 1)}> */}
                 <MaterialIcons
                     name={item.checked === 1 ? "check-box" : "check-box-outline-blank"}
                     size={20} // Adjust the size here
@@ -108,7 +107,7 @@ export const ListScreen = ({ navigation }) => {
                     value={newItemSkills}
                     onChangeText={setNewItemSkills}
                     style={[styles.input, { borderColor: '#000', color: 'black' }]}
-                    placeholder="Enter skills"
+                    placeholder="Enter sku"
                     placeholderTextColor="blue"
                 />
                 <View style={styles.checkboxContainer}>

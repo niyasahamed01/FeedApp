@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FlatList, Text, StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { getItems, removeItem } from './cartdb';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, TextInput } from 'react-native-paper';
 
 import CartEventEmitter from './CartEventEmitter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCart } from './CartContext';
 
 export const CartListComponent = ({ navigation }) => {
+
+  const { removeFromCart } = useCart();
 
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,10 +31,10 @@ export const CartListComponent = ({ navigation }) => {
 
   const fetchCartItems = async () => {
     try {
-
       setLoading(true);
       const items = await getItems();
       setCartItems(items);
+      console.log(cartItems, "cartItems");
     } catch (error) {
       console.error('Error fetching cart items:', error);
     } finally {
@@ -42,44 +45,51 @@ export const CartListComponent = ({ navigation }) => {
   const handleRemoveItem = async (itemId) => {
     try {
       await removeItem(itemId);
+      await removeFromCart(itemId);
     } catch (error) {
       console.error('Error removing item:', error);
     }
   };
 
   const handleItem = async (item) => {
-    console.log(item, "item.............");
     try {
       const profileImageUri = await AsyncStorage.getItem('profileImage');
       const name = await AsyncStorage.getItem('name');
       const phone = await AsyncStorage.getItem('phone');
       const email = await AsyncStorage.getItem('email');
       const address = await AsyncStorage.getItem('address');
+      const city = await AsyncStorage.getItem('city');
+      const state = await AsyncStorage.getItem('state');
       const pin = await AsyncStorage.getItem('pin');
-      navigation.navigate('AddressItem', { name, phone, email, address, pin, image: profileImageUri, item: item });
+      navigation.navigate('AddressItem', { name, phone, email, address, pin, image: profileImageUri, item: item, state, city });
     } catch (error) {
       console.error('Error removing item:', error);
     }
   };
 
-  const renderItem = useCallback(({ item }) => (
-    <View style={styles.item}>
-      <Image source={{ uri: item.thumbnail }} style={styles.image} />
-      <View style={styles.itemDetails}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.description}>{item.description}</Text>
-        <View style={{ flex: 5, flexDirection: 'row', justifyContent: 'space-evenly' }}>
-          <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveItem(item.item_id)}>
-            <Text style={styles.buttonText}>REMOVE</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.addButton} onPress={() => handleItem(item)}>
-            <Text style={styles.buttonText}>BUY NOW</Text>
-          </TouchableOpacity>
-        </View>
+  const renderItem = useCallback(({ item }) => {
+    return (
+      <View style={styles.item}>
+        <Image source={{ uri: item.thumbnail }} style={styles.image} />
+        <View style={styles.itemDetails}>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.description}>{item.description}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+            <Text style={styles.countText}>Item: {item?.count}</Text>
 
+            <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveItem(item.item_id)}>
+              <Text style={styles.buttonText}>REMOVE</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.addButton} onPress={() => handleItem(item)}>
+              <Text style={styles.buttonText}>BUY NOW</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
       </View>
-    </View>
-  ), []);
+    );
+  }, [cartItems]);
 
   if (loading) {
     return (
@@ -138,15 +148,17 @@ const styles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: '#ff0000',
     borderRadius: 5,
-    padding: 10,
-    color: 'black'
+    padding: 5,
+    color: 'black',
+    fontSize: 10
   },
   addButton: {
     marginTop: 10,
     backgroundColor: 'orange',
     borderRadius: 5,
-    padding: 10,
-    color: 'black'
+    padding: 5,
+    color: 'black',
+    fontSize: 10
   },
   buttonText: {
     color: '#fff',
@@ -159,11 +171,17 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: 'black',
-    fontWeight:'bold'
+    fontWeight: 'bold'
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  countText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    color: 'black'
   },
 });

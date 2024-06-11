@@ -25,8 +25,8 @@ export const createTable = async () => {
         thumbnail TEXT, 
         category TEXT, 
         rating REAL,
-        price INTEGER
-      )`,
+        price INTEGER,
+        count INTEGER DEFAULT 1)`,
       [],
       () => {
         console.log('Table created successfully');
@@ -69,24 +69,58 @@ const checkAndAddPriceColumn = async () => {
   });
 };
 
+const checkCount = async () => {
+  const db = await openDB();
+  await db.transaction(txn => {
+    txn.executeSql(
+      `PRAGMA table_info(Cart)`,
+      [],
+      (tx, results) => {
+        const columns = [];
+        for (let i = 0; i < results.rows.length; i++) {
+          columns.push(results.rows.item(i).name);
+        }
+        if (!columns.includes('count')) {
+          txn.executeSql(
+            `ALTER TABLE Cart ADD COLUMN count INTEGER`,
+            [],
+            () => {
+              console.log('Count column added successfully');
+            },
+            error => {
+              console.error('Error adding count column: ', error.message);
+            }
+          );
+        }
+      },
+      error => {
+        console.error('Error checking table info: ', error.message);
+      }
+    );
+  });
+};
+
 const initializeDatabase = async () => {
   await createTable();
   await checkAndAddPriceColumn();
+  await checkCount();
 };
 
 initializeDatabase();
 
 export const insertItem = async (item) => {
   const db = await openDB();
-  await db.transaction(txn => {
-    txn.executeSql(
-      `INSERT OR REPLACE INTO Cart (item_id, title, description, thumbnail, category, rating, price) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  await db.transaction(async (txn) => {
+    await txn.executeSql(
+      `INSERT INTO Cart (item_id, title, description, thumbnail, category, rating, price, count)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+       ON CONFLICT(item_id) DO UPDATE SET count = count + 1`,
       [item.id, item.title, item.description, item.thumbnail, item.category, item.rating, item.price],
       () => {
         console.log('Item added successfully');
         CartEventEmitter.emit('itemAdded');
       },
-      error => {
+      (error) => {
         console.error('Error adding item: ', error.message);
       }
     );

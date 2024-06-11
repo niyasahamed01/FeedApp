@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, ToastAndroid, FlatList, Button } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Video from 'react-native-video';
+import { useCart } from './CartContext';
+import { createTable, insertItem } from './cartdb'; // Import the database helper functions
 
 
 const ProductDetail = ({ route }) => {
+
+    const { addToCart } = useCart();
+
+    useEffect(() => {
+        createTable(); // Ensure the table is created when the application starts
+      }, []);
 
     const { item } = route.params;
     const [paused, setPaused] = useState(true);
@@ -14,17 +22,16 @@ const ProductDetail = ({ route }) => {
     };
 
     const handleItemPress = (item) => {
+        insertItem(item);
+        addToCart(item);
         showToast(` ${item?.title} - Added to Cart`)
     }
 
-    const handlePress = (item) => {
-        showToast(` ${item?.title} - Cash On Delivery`)
-    }
 
     return (
         <ScrollView style={styles.headcontainer}>
 
-            <View>
+            <View style={{margin:8}}>
 
                 <Image source={{ uri: item.thumbnail }} style={styles.image} />
 
@@ -47,10 +54,6 @@ const ProductDetail = ({ route }) => {
 
                 <TouchableOpacity onPress={() => handleItemPress(item)}>
                     <Text style={styles.cart}>Add to Cart</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => handlePress(item)}>
-                    <Text style={styles.buy}>Buy</Text>
                 </TouchableOpacity>
 
                 <Text style={styles.warray}>Shipping: {item.shippingInformation}  </Text>
@@ -157,7 +160,7 @@ const styles = StyleSheet.create({
     },
     headcontainer: {
         flex: 1,
-        backgroundColor: 'pink'
+        backgroundColor: 'pink',
     },
     item: {
         margin: 8, fontSize: 16, color: 'black'
@@ -193,7 +196,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginTop: 5,
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 14,
         alignSelf: 'center',
         color: 'black',
         //backgroundColor: 'grey', 
@@ -232,7 +235,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 10,
         backgroundColor: 'violet',
-        marginLeft: 10, 
+        marginLeft: 10,
         marginRight: 10,
         marginTop: 10,
     },

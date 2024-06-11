@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     paddingVertical: 10,
+    color:'black'
   },
   icon: {
     padding: 5,
