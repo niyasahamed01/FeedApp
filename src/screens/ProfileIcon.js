@@ -1,7 +1,7 @@
 
 import React, { useContext } from 'react';
 import { View, Image } from 'react-native';
-import {ProfileContext} from '../screens/ProfileProvider';
+import {ProfileContext} from '../provider/ProfileProvider';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const ProfileIcon = ({color,size}) => {

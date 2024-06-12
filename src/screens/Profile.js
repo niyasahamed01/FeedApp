@@ -3,7 +3,7 @@ import { View, TextInput, Button, Image, PermissionsAndroid, Platform, Alert, Li
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ProfileContext } from '../screens/ProfileProvider';
+import { ProfileContext } from '../provider/ProfileProvider';
 import ActionSheet from 'react-native-actionsheet';
 import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
 

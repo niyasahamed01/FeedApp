@@ -1,5 +1,5 @@
 import SQLite from 'react-native-sqlite-storage';
-import CartEventEmitter from './CartEventEmitter';
+import CartEventEmitter from '../screens/CartEventEmitter';
 
 SQLite.DEBUG(true);
 SQLite.enablePromise(true);

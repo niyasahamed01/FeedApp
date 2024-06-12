@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCart } from './CartContext';
+import { useCart } from '../provider/CartContext';
 
 const ReviewScreen = ({ route, navigation }) => {
 

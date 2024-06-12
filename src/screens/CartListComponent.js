@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FlatList, Text, StyleSheet, View, TouchableOpacity, Image } from 'react-native';
-import { clearCart, getItems, removeItem } from './cartdb';
+import { clearCart, getItems, removeItem } from '../database/cartdb';
 import { ActivityIndicator } from 'react-native-paper';
 
 import CartEventEmitter from './CartEventEmitter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCart } from './CartContext';
+import { useCart } from '../provider/CartContext';
 
 export const CartListComponent = ({ route, navigation }) => {
 
@@ -87,18 +87,23 @@ export const CartListComponent = ({ route, navigation }) => {
   const renderItem = useCallback(({ item }) => {
     return (
       <View style={styles.item}>
-      <Image source={{ uri: item.thumbnail }} style={styles.image} />
-      <View style={styles.itemDetails}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.description}>{item.description}</Text>
-        <View style={styles.buttonContainer}>
-          <Text style={styles.countText}>Item: {item?.count}</Text>
-          <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveItem(item.item_id)}>
-            <Text style={styles.buttonText}>REMOVE</Text>
-          </TouchableOpacity>
+        <Image source={{ uri: item.thumbnail }} style={styles.image} />
+        <View style={styles.itemDetails}>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.description}>{item.description}</Text>
+          <View style={styles.buttonContainer}>
+
+            <View style={{ flex: 1,flexDirection:'row', justifyContent: 'space-between' }}>
+              <Text style={styles.countText}>Item: {item.count}</Text>
+              <Text style={styles.countText}>Item Price: {item.price}</Text>
+            </View>
+
+            <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveItem(item.item_id)}>
+              <Text style={styles.buttonText}>REMOVE</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
     );
   }, [cartItems]);
 
@@ -165,6 +170,7 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     borderRadius: 10,
+    alignSelf: 'center'
   },
   removeButton: {
     marginTop: 10,
@@ -200,9 +206,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   countText: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
     color: 'black',
-    justifyContent:'flex-start'
   },
 });

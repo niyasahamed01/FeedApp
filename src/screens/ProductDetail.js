@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, ToastAndroid, FlatList, Button } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Video from 'react-native-video';
-import { useCart } from './CartContext';
-import { createTable, insertItem } from './cartdb'; // Import the database helper functions
+import { useCart } from '../provider/CartContext';
+import { createTable, insertItem } from '../database/cartdb'; // Import the database helper functions
 
 
 const ProductDetail = ({ route }) => {

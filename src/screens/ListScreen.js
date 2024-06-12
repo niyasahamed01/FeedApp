@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, ActivityIndicator, TouchableOpacity, ToastAndroid, StyleSheet, TextInput, Image, Button } from 'react-native';
 import { Checkbox } from 'react-native-paper';
-import { createTable, getItems, insertItem, updateItem, deleteItem } from './database';
+import { createTable, getItems, insertItem, updateItem, deleteItem } from '../database/database';
 
 export const ListScreen = ({ navigation }) => {
 

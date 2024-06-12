@@ -4,8 +4,8 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNextPage } from '../redux/homeSlice';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { createTable, insertItem } from './cartdb'; // Import the database helper functions
-import { useCart } from './CartContext';
+import { createTable, insertItem } from '../database/cartdb'; // Import the database helper functions
+import { useCart } from '../provider/CartContext';
 
 
 export const StoreComponent = ({ navigation }) => {
