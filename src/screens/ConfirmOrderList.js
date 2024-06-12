@@ -1,35 +1,49 @@
-import React, { useEffect } from 'react';
-import { View, Text, ScrollView, FlatList, Image, StyleSheet, ActivityIndicator } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { setLoading } from '../redux/orderReducer';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const OrderListScreen = () => {
-  const dispatch = useDispatch();
-  const { orderList, loading } = useSelector(state => state.orderList);
+
+  const [orderData, setOrderData] = useState(null); // Use an object to store order data
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate fetching data (replace with actual fetch operation)
-    dispatch(setLoading(true)); // Set loading to true when fetching starts
-    setTimeout(() => {
-      // Simulate fetching delay
-      dispatch(setLoading(false)); // Set loading to false when fetching completes
-    }, 2000);
-  }, [dispatch]);
+    const loadOrderData = async () => {
+      try {
+        setLoading(true); // Set loading to true when fetching starts
+        const storedOrderData = await AsyncStorage.getItem('orderData');
+
+        if (storedOrderData !== null) {
+          setOrderData(JSON.parse(storedOrderData)); // Set orderData state with stored data
+        }
+      } catch (error) {
+        console.error('Error loading order data: ', error);
+      } finally {
+        setLoading(false); // Set loading to false when fetching completes
+      }
+    };
+
+    loadOrderData();
+  }, []);
+
+  console.log(orderData, "orderData");
 
   return (
     <View style={styles.container}>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" /> // Display ActivityIndicator while loading
-      ) : orderList.length > 0 ? (
-        <ScrollView>
-          <FlatList
-            data={orderList}
-            renderItem={({ item }) => (
-              <OrderItem item={item} />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </ScrollView>
+      ) : orderData ? (
+        <FlatList
+          data={orderData.items}
+          renderItem={({ item }) => <OrderItem item={item} />}
+          keyExtractor={(item) => item.id.toString()}
+          ListHeaderComponent={() => (
+            <Text style={styles.totalPriceText}>Total Price: ${orderData.totalPrice}</Text>
+          )}
+          ListEmptyComponent={() => (
+            <Text style={styles.noOrderText}>No Order Found</Text>
+          )}
+        />
       ) : (
         <Text style={styles.noOrderText}>No Order Found</Text>
       )}
@@ -39,12 +53,12 @@ const OrderListScreen = () => {
 
 const OrderItem = ({ item }) => {
   return (
-    <View key={item.id} style={styles.card}>
+    <View style={styles.card}>
       <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
       <View style={styles.orderDetails}>
         <Text style={styles.itemTitle}>{item.title}</Text>
-        <Text style={styles.itemTitle}>Quantity:{item.count}</Text>
-        {/* <Text style={styles.itemTitle}>Total:{item.price}</Text> */}
+        <Text style={styles.itemPrice}>Quantity: {item.count}</Text>
+        <Text style={styles.itemPrice}>Price: ${item.price}</Text>
       </View>
     </View>
   );
@@ -107,6 +121,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     color: 'red', // Custom styling for the "No Order Found" message
     marginTop: 20, // Additional margin top for better spacing
+  },
+  totalPriceText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+    color: 'green',
+    textAlign: 'center',
   },
 });
 

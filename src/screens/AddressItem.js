@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView, ToastAndroid } from 'react-native';
-import { Button, Image } from 'react-native-elements';
+import { Image } from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather';
 
 const paymentMethods = [
@@ -10,32 +10,22 @@ const paymentMethods = [
 ];
 
 const AddressItem = ({ route, navigation }) => {
-
-  const { name, phone, email, address, pin, item: item, city, state } = route.params;
+  const { name, phone, email, address, pin, items, city, state } = route.params;
 
   const [selectedPayment, setSelectedPayment] = useState(null);
-  const [price, setPrice] = useState(parseFloat(item.price * item.count).toFixed(2));
-  const [count, setCount] = useState(item.count);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
-    setPrice((parseFloat(item.price) * item.count).toFixed(2));
-    setCount(item.count);
-  }, [item.count]);
+    const calculateTotalPrice = () => {
+      let total = 0;
+      items.forEach(item => {
+        total += parseFloat(item.price) * item.count;
+      });
+      setTotalPrice(total.toFixed(2));
+    };
 
-  const incrementAmount = parseFloat(item.price).toFixed(2);
-  const decrementAmount = parseFloat(item.price).toFixed(2);
-
-  const increasePrice = () => {
-    setPrice((prevPrice) => (parseFloat(prevPrice) + parseFloat(incrementAmount)).toFixed(2));
-    setCount((prevCount) => prevCount + 1);
-  };
-
-  const decreasePrice = () => {
-    if (count > 1) {
-      setPrice((prevPrice) => (parseFloat(prevPrice) - parseFloat(decrementAmount) >= 0 ? (parseFloat(prevPrice) - parseFloat(decrementAmount)).toFixed(2) : '0.00'));
-      setCount((prevCount) => prevCount - 1);
-    }
-  };
+    calculateTotalPrice();
+  }, [items]);
 
   const handlePaymentSelect = (method) => {
     setSelectedPayment(method);
@@ -44,7 +34,7 @@ const AddressItem = ({ route, navigation }) => {
   const proceedToReview = () => {
     if (selectedPayment) {
       if (name) {
-        navigation.navigate('Review', { payment: selectedPayment, item: item, price: price });
+        navigation.navigate('Review', { payment: selectedPayment, items: items, totalPrice: totalPrice });
       } else {
         showToast("Please Add Address in Profile");
       }
@@ -64,30 +54,17 @@ const AddressItem = ({ route, navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.addressContainer}>
-        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
-          <Image source={{ uri: item.thumbnail }} style={styles.image} />
-          <View style={{ flex: 1, flexDirection: 'column' }}>
-            <Text style={styles.order}>Order Id: {item.item_id}</Text>
-            <Text style={styles.order}>Order Name: {item.title}</Text>
-            <Text style={styles.order}>Order Price: {item.price} /-</Text>
+        {items.map((item) => (
+          <View key={item.item_id} style={styles.itemContainer}>
+            <Image source={{ uri: item.thumbnail }} style={styles.image} />
+            <View style={styles.itemDetails}>
+              <Text numberOfLines={1} style={styles.order}>Order Id: {item.item_id}</Text>
+              <Text numberOfLines={1} style={styles.order}>Order Name: {item.title}</Text>
+              <Text numberOfLines={1}  style={styles.order}>Order Price: {item.price} /-</Text>
+              <Text numberOfLines={1} style={styles.order}>Count: {item.count}</Text>
+            </View>
           </View>
-        </View>
-        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', margin: 10 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, alignSelf: 'center' }}>
-            <TouchableOpacity
-              style={[styles.countButton, count === 1 && styles.disabledButton]}
-              onPress={decreasePrice}
-              disabled={count === 1}
-            >
-              <Text style={styles.countText}>-</Text>
-            </TouchableOpacity>
-            <Text style={styles.countValue}>{count}</Text>
-            <TouchableOpacity style={styles.countButton} onPress={increasePrice}>
-              <Text style={styles.countText}>+</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.countValue}>Total Price: {price} /-</Text>
-        </View>
+        ))}
         {name ? (
           <View>
             <Text style={styles.title}>Shipping Address</Text>
@@ -190,7 +167,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 15,
-
   },
   addressContainer: {
     marginBottom: 20,
@@ -209,32 +185,16 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 15,
   },
-  count: {
-    fontSize: 20,
-    margin: 20,
-    alignSelf: 'center',
-    color: 'black',
-    fontWeight: 'bold',
+  itemContainer: {
+    flexDirection: 'row',
+    margin: 10,
+    backgroundColor: '#f9c2ff',
+    padding: 5,
+    borderRadius: 10,
   },
-  countButton: {
-    backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 5,
-  },
-  countText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-  countValue: {
-    color: 'black',
-    fontSize: 16,
-    marginLeft: 15,
-    marginRight: 15,
-    fontWeight: 'bold',
-    alignSelf: 'center'
-  },
-  disabledButton: {
-    backgroundColor: '#cccccc',
+  itemDetails: {
+    flex: 1,
+    marginLeft: 10,
   },
 });
 

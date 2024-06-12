@@ -1,69 +1,116 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { addToOrderList } from '../redux/orderReducer';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCart } from './CartContext';
 
 const ReviewScreen = ({ route, navigation }) => {
 
-  const { payment, item, price } = route.params;
+  const { payment, items, totalPrice } = route.params;
+  const { cartItems, removeFromCart } = useCart();
 
-  const dispatch = useDispatch();
 
-  const handleConfirmOrder = () => {
-    // If price is fetched successfully
-    dispatch(addToOrderList({ ...item, price })); // Include price in the order item
+  const handleConfirmOrder = async () => {
+
+    // Show the alert immediately
     Alert.alert(
-      'Order Confirmed',
-      `Your Order Item ${'Rs' + price + item.title + ' '} Product Confirmed!`,
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.navigate('Home') // Navigate to the 'Home' screen
-        }
-      ]
+      'Order Confirmation', // Title
+      'Order confirmed!', // Message
+      [{ text: 'OK', onPress: () => navigation.navigate('Cart', { clearCart: true }) }] // Button configuration
     );
+
+    try {
+      // Handle order confirmation logic here
+      const orderData = { items, totalPrice };
+      // Convert items data to a JSON string
+      const itemsData = JSON.stringify(orderData);
+      // Store the items data in AsyncStorage
+      await AsyncStorage.setItem('orderData', itemsData);
+
+      // Remove all items from the cart
+      for (const item of cartItems) {
+        await removeFromCart(item.id);
+      }
+    } catch (error) {
+      console.error('Error confirming order: ', error);
+    } 
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Review Your Order</Text>
-      <Text style={styles.detail}>Payment Method: {payment.method}</Text>
-      {price !== null && (
-        <Text style={styles.detail}>Price: Rs.{price} /-</Text>
-      )}
-      <TouchableOpacity style={styles.button} onPress={handleConfirmOrder}>
+      <Text style={styles.subTitle}>Payment Method: {payment.method}</Text>
+      <View style={styles.itemsContainer}>
+        {items.map((item) => (
+          <View key={item.item_id} style={styles.item}>
+            <Text style={styles.itemText}>Order Id: {item.item_id}</Text>
+            <Text style={styles.itemText}>Order Name: {item.title}</Text>
+            <Text style={styles.itemText}>Order Price: {item.price} /-</Text>
+            <Text style={styles.itemText}>Count: {item.count}</Text>
+          </View>
+        ))}
+      </View>
+      <Text style={styles.totalText}>Total Price: {totalPrice} /-</Text>
+
+      <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmOrder}>
         <Text style={styles.buttonText}>Confirm Order</Text>
       </TouchableOpacity>
-    </View>
+
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#f8f8f8',
+    padding: 20,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
+    fontWeight: 'bold',
     marginBottom: 20,
-    color: 'black'
+    color: 'black',
   },
-  detail: {
-    fontSize: 16,
-    marginBottom: 10,
-    color: 'black'
+  subTitle: {
+    fontSize: 18,
+    marginBottom: 20,
+    color: 'black',
   },
-  button: {
-    marginTop: 20,
+  itemsContainer: {
+    marginBottom: 20,
+  },
+  item: {
+    backgroundColor: '#fff',
     padding: 15,
+    borderRadius: 5,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  itemText: {
+    fontSize: 16,
+    color: 'black',
+  },
+  totalText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: 'black',
+  },
+  confirmButton: {
     backgroundColor: '#007bff',
+    padding: 15,
     borderRadius: 5,
     alignItems: 'center',
+    marginBottom: 20
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

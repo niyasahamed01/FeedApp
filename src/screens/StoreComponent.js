@@ -88,7 +88,7 @@ export const StoreComponent = ({ navigation }) => {
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
 
           <Text numberOfLines={1} style={styles.title}>Rs.{item.price} /-</Text>
-          <View style={{  flexDirection: 'row',marginTop:2 }}>
+          <View style={{ flexDirection: 'row', marginTop: 2 }}>
             {[...Array(5)].map((_, index) => (
               <FontAwesome
                 key={index}

@@ -127,6 +127,24 @@ export const insertItem = async (item) => {
   });
 };
 
+
+export const updateItemCount = async (item) => {
+  const db = await openDB();
+  await db.transaction(async (txn) => {
+    await txn.executeSql(
+      `UPDATE Cart SET count = ? WHERE item_id = ?`,
+      [item.count, item.id],
+      () => {
+        console.log('Item count updated successfully');
+        CartEventEmitter.emit('itemCountUpdated');
+      },
+      (error) => {
+        console.error('Error updating item count: ', error.message);
+      }
+    );
+  });
+};
+
 export const getItems = async () => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -165,4 +183,20 @@ export const removeItem = async (itemId) => {
       }
     );
   });
+};
+
+export const clearCart = async () => {
+  try {
+    const db = await openDB();
+    await db.transaction(async (txn) => {
+      // Execute SQL query to delete all records from the cart table
+      await txn.executeSql('DELETE FROM Cart');
+      console.log('Cart cleared successfully');
+      // Emit an event after successfully clearing the cart
+      CartEventEmitter.emit('cartCleared');
+    });
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    throw error;
+  }
 };
