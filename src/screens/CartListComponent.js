@@ -87,18 +87,18 @@ export const CartListComponent = ({ route, navigation }) => {
   const renderItem = useCallback(({ item }) => {
     return (
       <View style={styles.item}>
-        <Image source={{ uri: item.thumbnail }} style={styles.image} />
-        <View style={styles.itemDetails}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.description}>{item.description}</Text>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-            <Text style={styles.countText}>Item: {item?.count}</Text>
-            <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveItem(item.item_id)}>
-              <Text style={styles.buttonText}>REMOVE</Text>
-            </TouchableOpacity>
-          </View>
+      <Image source={{ uri: item.thumbnail }} style={styles.image} />
+      <View style={styles.itemDetails}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.description}>{item.description}</Text>
+        <View style={styles.buttonContainer}>
+          <Text style={styles.countText}>Item: {item?.count}</Text>
+          <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveItem(item.item_id)}>
+            <Text style={styles.buttonText}>REMOVE</Text>
+          </TouchableOpacity>
         </View>
       </View>
+    </View>
     );
   }, [cartItems]);
 
@@ -200,9 +200,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   countText: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: 'bold',
-    alignSelf: 'center',
     color: 'black',
+    justifyContent:'flex-start'
   },
 });
