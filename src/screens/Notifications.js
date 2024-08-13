@@ -15,7 +15,7 @@ const Notification = () => {
     }, [dispatch]);
 
     const handleItemPress = (item) => {
-        ToastModule.showToast(`Item Clicked: ${item.title}`);
+        ToastModule.showToast(`Item Clicked: ${item.title}`,4);
     };
 
     const renderItem = ({ item }) => (
