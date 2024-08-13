@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity ,NativeModules} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchApiData } from '../redux/fetchApiData';
+const { ToastModule } = NativeModules;
 
 const Notification = () => {
 
@@ -10,9 +11,15 @@ const Notification = () => {
 
     useEffect(() => {
         dispatch(fetchApiData());
+        
     }, [dispatch]);
 
+    const handleItemPress = (item) => {
+        ToastModule.showToast(`Item Clicked: ${item.title}`);
+    };
+
     const renderItem = ({ item }) => (
+        <TouchableOpacity onPress={() => handleItemPress(item)}>
         <View style={styles.itemContainer}>
             <Image source={{ uri: item.thumbnail }} style={styles.image} />
             <View style={styles.textContainer}>
@@ -22,6 +29,8 @@ const Notification = () => {
                 <Text style={styles.title}>{`Discount Percentage: ${item.discountPercentage} %`}</Text>
             </View>
         </View>
+        </TouchableOpacity>
+
     );
 
 
