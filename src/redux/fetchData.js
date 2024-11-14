@@ -16,7 +16,6 @@ export const fetchDownloadData = async (page, limit, skip) => {
   try {
     const response = await fetch(`${BASE_URL}?page=${page}&limit=${limit}&skip=${skip}`);
     const data = await response.json();
-    console.log(page,"page.............");
 
     return data;
   } catch (error) {
@@ -29,7 +28,6 @@ export const fetchHomeData = async (page, limit, skip) => {
   try {
     const response = await fetch(`${BASE_URL}?page=${page}&limit=${limit}&skip=${skip}`);
     const data = await response.json();
-    console.log(page,"page.............");
     return data;
   } catch (error) {
     throw new Error('Failed to fetch data');

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeList } from './src/screens/Home';
 import { EmptyPage } from './src/screens/EmptyPage';
 import { Input } from './src/screens/Input';
@@ -17,7 +17,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Notification from './src/screens/Notifications';
 import Detail from './src/screens/DownloadScreen';
-import { Image, Text } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import SplashScreen from './src/screens/SplashScreen';
 import LoginScreen from './src/screens/AuthScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
@@ -33,6 +33,8 @@ import ReviewScreen from './src/screens/ReviewScreen';
 import ConfirmOrderList from './src/screens/ConfirmOrderList';
 import { SettingScreen } from './src/screens/SettingScreen';
 import { CartProvider, useCart } from './src/provider/CartContext';
+import { GridComponent } from './src/screens/GridComponent';
+import { ChatScreen } from './src/screens/ChatScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -41,7 +43,13 @@ const App: React.FC = () => {
 
   const [isSplashComplete, setIsSplashComplete] = useState<boolean | null>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isGridView, setIsGridView] = useState(false); // State to toggle between grid and list
 
+
+  const toggleView = () => {
+    setIsGridView(!isGridView);
+    // console.log(isGridView ? 'Switched to List View' : 'Switched to Grid View'); // Add any other action
+  };
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -87,11 +95,13 @@ const App: React.FC = () => {
           component={AuthStack}
         />
       ) : (
-        <Stack.Screen
-          name="Main"
-          options={{ headerShown: false }}
-          component={TabNavigator}
-        />
+        <>
+          <Stack.Screen
+            name="Main"
+            options={{ headerShown: false }}
+            component={TabNavigator}
+          />
+        </>
       )}
     </Stack.Navigator>
   );
@@ -111,18 +121,39 @@ const App: React.FC = () => {
       initialRouteName="Home"
       screenOptions={{
         tabBarActiveTintColor: '#000',
-        tabBarStyle: { height: 65 },
+        tabBarStyle: { height: 65, paddingBottom: 5 },
       }}
     >
       <Tab.Screen
-        name="HomeComponent"
-        component={HomeStack}
+        name="Home"
+        component={isGridView ? GridStack : HomeStack}
         options={{
           tabBarLabel: 'Home',
-          headerShown: false,
-          tabBarLabelStyle: { fontSize: 15 },
+          headerShown: true,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
+          ),
+          headerStyle: {
+            height: 80, // Set fixed height for the header
+            backgroundColor: 'white', // Optional, set your header background color
+            shadowOpacity: 0,
+          },
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={toggleView}
+              style={{
+                paddingRight: 20,  // Padding for alignment
+                position: 'absolute',  // Absolute positioning to avoid shifting layout
+                right: 0,  // Align the icon to the right side
+                top: 20,  // Adjust the vertical positioning of the icon
+              }}
+            >
+              <MaterialCommunityIcons
+                name={isGridView ? 'format-indent-decrease' : 'format-list-checkbox'}
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -150,7 +181,6 @@ const App: React.FC = () => {
           ),
         }}
       />
-
       <Tab.Screen
         name="Cart"
         component={CartStack}
@@ -191,8 +221,41 @@ const App: React.FC = () => {
 
   const HomeStack = () => (
     <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={HomeList} />
-      <Stack.Screen name="ProductDetail" component={ProductDetail} />
+      <Stack.Screen name="Home"
+        component={HomeList}
+        options={{
+          headerShown: false,
+        }} />
+      <Stack.Screen name="ProductDetail"
+        options={{
+          headerShown: false,
+        }}
+        component={ProductDetail} />
+      <Stack.Screen
+        name="Chat"
+        options={{ headerShown: false }}
+        component={ChatScreen}
+      />
+    </Stack.Navigator>
+  );
+
+  const GridStack = () => (
+    <Stack.Navigator >
+      <Stack.Screen name="Grid"
+        component={GridComponent}
+        options={{
+          headerShown: false,
+        }} />
+      <Stack.Screen name="ProductDetail"
+        options={{
+          headerShown: false,
+        }}
+        component={ProductDetail} />
+      <Stack.Screen
+        name="Chat"
+        options={{ headerShown: false }}
+        component={ChatScreen}
+      />
     </Stack.Navigator>
   );
 
@@ -205,7 +268,8 @@ const App: React.FC = () => {
 
   const CartStack = () => (
     <Stack.Navigator>
-      <Stack.Screen name="Cart" component={CartListComponent} />
+      <Stack.Screen name="Cart"
+        component={CartListComponent} />
       <Stack.Screen
         name="AddressItem"
         component={AddressItem}
@@ -246,6 +310,7 @@ const App: React.FC = () => {
     </Stack.Navigator>
   );
 
+
   return (
     <Provider store={store}>
       <MainNavigation />
@@ -254,5 +319,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
-

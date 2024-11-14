@@ -2,6 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { FlatList, Text, StyleSheet, StatusBar, View, ToastAndroid, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNextPage } from '../redux/homeSlice';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 const PureItem = React.memo(({ item, navigation }) => (
@@ -64,15 +65,27 @@ export const HomeList = ({ navigation }) => {
         </View>
     }
 
+
+    const handleFabPress = () => {
+        navigation.navigate('Chat');
+    };
+
     return (
-        <FlatList
-            data={products}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => <PureItem item={item} navigation={navigation} />}
-            ListFooterComponent={renderFooter}
-            onEndReached={handleLoadMore}
-            onEndReachedThreshold={0.5}
-        />
+        <>
+            <FlatList
+                data={products}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => <PureItem item={item} navigation={navigation} />}
+                ListFooterComponent={renderFooter}
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.5}
+            />
+            <TouchableOpacity style={styles.fab} onPress={handleFabPress}>
+                <MaterialCommunityIcons name="chat-plus" size={30} color="black" />
+            </TouchableOpacity>
+
+        </>
+
     );
 }
 
@@ -147,5 +160,19 @@ const styles = StyleSheet.create({
         borderTopColor: '#ccc', // Color of the border
         alignItems: 'center', // Align items to the center horizontally
     },
-
+    container: {
+        flex: 1,
+      },
+      fab: {
+        position: 'absolute',
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: '#6200EE',
+        justifyContent: 'center',
+        alignItems: 'center',
+        bottom: '10%',
+        right: '5%',
+        elevation: 5,
+      },
 });
