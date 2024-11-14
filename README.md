@@ -89,4 +89,5 @@ To learn more about React Native, take a look at the following resources:
 ![screen7](https://github.com/user-attachments/assets/ff700a31-1a59-4785-ae40-dcc746ac05c3)
 ![screen8](https://github.com/user-attachments/assets/b7c0465a-127b-442b-96a5-f24bb604dc65)
 ![screen9](https://github.com/user-attachments/assets/b8edc39d-29da-4398-8f5b-999bb05e5f19)
+![screen10](https://github.com/user-attachments/assets/19d94e98-04c2-4a45-b1f0-9cff1f0e8256)
 
