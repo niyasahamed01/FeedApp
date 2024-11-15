@@ -80,6 +80,8 @@ To learn more about React Native, take a look at the following resources:
 
 # Order App
 
+![login](https://github.com/user-attachments/assets/83b8f6dd-1143-49c4-b723-0181a650275c)
+![register](https://github.com/user-attachments/assets/bc96c0b5-1ee2-45b6-8f69-4949040ec06e)
 ![screen1](https://github.com/user-attachments/assets/9b14887a-89e4-4a33-9a67-186072ad70dd)
 ![screen2](https://github.com/user-attachments/assets/67565226-7475-423d-9fd8-4a7f6c413035)
 ![screen3](https://github.com/user-attachments/assets/97d0041b-8a84-4107-ba63-ca4bf3663cc7)
